@@ -22,24 +22,17 @@ let main = {
         test: /.tsx?$/,
         include: [path.resolve(__dirname, "source")],
         exclude: [path.resolve(__dirname, "node_modules")],
-        loader: "ts-loader"
+        use: [
+          {
+            loader: "ts-loader"
+          }
+        ]
       }
     ]
   },
   resolve: {
-    extensions: [".js", ".ts"]
-  },
-  plugins: [
-    new CopyWebpackPlugin(
-      [
-        {
-          context: "source",
-          from: "**/*.html",
-          to: path.resolve(__dirname, "dist")
-        }
-      ]
-    )
-  ]
+    extensions: [".ts", ".js"]
+  }
 };
 
 let renderer = {
@@ -55,13 +48,50 @@ let renderer = {
       {
         test: /\.tsx?$/,
         include: [path.resolve(__dirname, "source"), path.resolve(__dirname, "node_modules")],
-        loader: "ts-loader"
+        use: [
+          {
+            loader: "ts-loader"
+          }
+        ]
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          {
+            loader: "style-loader"
+          },
+          {
+            loader: "css-loader"
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              plugins: () => {
+                return [require("precss"), require("autoprefixer")];
+              }
+            }
+          },
+          {
+            loader: "sass-loader"
+          }
+        ]
       }
     ]
   },
   resolve: {
-    extensions: [".json", ".js", ".jsx", ".css", ".ts", ".tsx"]
-  }
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".scss", ".css"]
+  },
+  plugins: [
+    new CopyWebpackPlugin(
+      [
+        {
+          context: "source",
+          from: "**/*.html",
+          to: path.resolve(__dirname, "dist")
+        }
+      ]
+    )
+  ]
 };
 
 export default [main, renderer];

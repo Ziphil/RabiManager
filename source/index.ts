@@ -23,7 +23,7 @@ class Main {
   }
 
   private createWindow(): void {
-    this.window = new BrowserWindow({width: 800, height: 600, autoHideMenuBar: true, acceptFirstMouse: true});
+    this.window = new BrowserWindow({width: 800, height: 600, autoHideMenuBar: true, acceptFirstMouse: true, webPreferences: {nodeIntegration: false}});
     this.window.loadFile("./index.html");
     this.window.on("closed", () => {
       this.window = null;
