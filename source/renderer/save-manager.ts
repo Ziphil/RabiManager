@@ -7,7 +7,7 @@ import {
 
 
 const STEAM_DIRECTORY = "C:/Program Files (x86)/Steam/steamapps/common/Rabi-Ribi/save";
-const BACKUP_DIRECTORY = __dirname + "/save";
+const BACKUP_DIRECTORY = joinPath(process.env[(process.platform === "win32") ? "USERPROFILE" : "HOME"] ?? "", ".rabimanager");
 
 
 export class Save {
@@ -92,8 +92,13 @@ export class SaveManager {
   public saves: Map<string, Save> = new Map();
 
   public constructor() {
+    this.ensureDirectory();
     this.loadSaves();
     this.loadSetting();
+  }
+
+  private ensureDirectory(): void {
+    fs.mkdirSync(BACKUP_DIRECTORY, {recursive: true});
   }
 
   private loadSaves(): void {
