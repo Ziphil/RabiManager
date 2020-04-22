@@ -1,7 +1,7 @@
 //
 
 import "bootstrap";
-import "../style.scss";
+import "../style/style.scss";
 import {
   SaveManager
 } from "./save-manager";
