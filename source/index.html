@@ -8,17 +8,47 @@
   </head>
   <body>
 
-    <div class="form-inline">
-      <select id="change-key" class="form-control"></select>
-      <input id="change" class="form-control btn btn-primary" type="submit" value="決定"></input>
+    <div class="container-fluid my-3">    
+      <h2 class="mb-4">Rabi Save Manager</h2>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-header">使用するセーブグループの変更</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="change-key">現在のセーブグループ名</label>
+                <input id="current" class="form-control" type="text" readonly></select>
+              </div>
+              <div class="form-group">
+                <label for="change-key">セーブグループ名 <span id="change-badge" class="badge badge-pill badge-primary">0</span></label>
+                <select id="change-key" class="form-control custom-select"></select>
+              </div>
+              <div>
+                <input id="change" class="btn btn-primary mr-2" type="submit" value="変更"></input>
+                <div class="btn-group" role="group" aria-label="sub">
+                  <input id="use" class="btn btn-outline-secondary" type="button" value="利用のみ"></input>
+                  <input id="backup" class="btn btn-outline-secondary" type="button" value="コピーのみ"></input>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 mt-3 mt-sm-0">
+          <div class="card">
+            <div class="card-header">新規セーブグループの作成</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="create-key">セーブグループ名</label>
+                <input id="create-key" class="form-control" type="text"></select>
+              </div>
+              <div>
+                <input id="create" class="btn btn-primary" type="submit" value="決定"></input>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="form-inline">
-      <input id="create-key" class="form-control" type="text"></select>
-      <input id="create" class="form-control btn btn-primary" type="submit" value="決定"></input>
-    </div>
-
-    <p id="current"></p>
 
   </body>
 </html>

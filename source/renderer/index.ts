@@ -33,6 +33,8 @@ class Executor {
       optionElement.text = key;
       keyElement.appendChild(optionElement);
     }
+    let badgeElement = document.getElementById("change-badge")!;
+    badgeElement.innerText = this.manager.saves.size.toString();
   }
 
   private prepareChangeButtons(): void {
@@ -57,8 +59,8 @@ class Executor {
 
   private updateCurrentKey(): void {
     let currentKey = this.manager.currentKey;
-    let currentKeyElement = document.getElementById("current")!;
-    currentKeyElement.innerText = currentKey ?? "N/A";
+    let currentKeyElement = document.getElementById("current")! as HTMLInputElement;
+    currentKeyElement.value = currentKey ?? "なし";
   }
 
 }

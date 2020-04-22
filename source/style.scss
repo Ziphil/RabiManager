@@ -1,12 +1,15 @@
 @charset "utf-8";
 
+
+@import "variable";
 @import "~bootstrap/scss/bootstrap";
 
 
 html {
-  font-size: 12px;
+  font-size: 13px;
 }
 
-body {
-  font-family: "Yu Gothic UI", "Meiryo UI";
+.container-fluid {
+  padding-left: $grid-gutter-width;
+  padding-right: $grid-gutter-width;
 }
