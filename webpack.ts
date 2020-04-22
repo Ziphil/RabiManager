@@ -43,6 +43,10 @@ let renderer = {
     filename: "index.js",
     path: path.resolve(__dirname, "dist", "script")
   },
+  node: {
+    __dirname: false,
+    __filename: false
+  },
   module: {
     rules: [
       {
