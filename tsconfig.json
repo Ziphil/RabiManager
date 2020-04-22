@@ -8,6 +8,7 @@
     "sourceMap": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "removeComments": true
