@@ -1,5 +1,5 @@
 {
-  "name": "rabi-save-manager",
+  "name": "zajka",
   "version": "1.0.0",
   "author": "Ziphil",
   "description": "",
@@ -10,7 +10,7 @@
     "start": "electron dist/index.js"
   },
   "build": {
-    "appId": "com.ziphil.rabi",
+    "appId": "com.ziphil.zajka",
     "win": {
       "target": "portable"
     }
