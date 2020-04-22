@@ -17,7 +17,7 @@ class Executor {
 
   public prepare(): void {
     this.prepareChangeButtons();
-    this.prepareCreateButtons();
+    this.prepareCreateButton();
     this.updateKeys();
     this.updateCurrentKey();
   }
@@ -38,22 +38,35 @@ class Executor {
   }
 
   private prepareChangeButtons(): void {
-    let button = document.getElementById("change")!;
-    button.addEventListener("click", () => {
-      let keyElement = document.getElementById("change-key")! as HTMLSelectElement;
+    let keyElement = document.getElementById("change-key")! as HTMLSelectElement;
+    let changeButton = document.getElementById("change")!;
+    let backupButton = document.getElementById("backup")!;
+    let useButton = document.getElementById("use")!;
+    changeButton.addEventListener("click", () => {
       let key = keyElement.value;
       this.manager.change(key);
       this.updateCurrentKey();
     });
+    backupButton.addEventListener("click", () => {
+      let key = keyElement.value;
+      this.manager.backup(key);
+      this.updateCurrentKey();
+    });
+    useButton.addEventListener("click", () => {
+      let key = keyElement.value;
+      this.manager.use(key);
+      this.updateCurrentKey();
+    });
   }
 
-  private prepareCreateButtons(): void {
-    let button = document.getElementById("create")!;
-    button.addEventListener("click", () => {
-      let keyElement = document.getElementById("create-key")! as HTMLInputElement;
+  private prepareCreateButton(): void {
+    let keyElement = document.getElementById("create-key")! as HTMLInputElement;
+    let createButton = document.getElementById("create")!;
+    createButton.addEventListener("click", () => {
       let key = keyElement.value;
       this.manager.backup(key);
       this.updateKeys();
+      this.updateCurrentKey();
     });
   }
 
