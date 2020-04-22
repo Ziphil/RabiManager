@@ -126,12 +126,14 @@ export class SaveManager {
 
   public backup(key: string): void {
     let save = this.saves.get(key);
+    if (save === undefined && key.match(/^[\w\d-]+$/)) {
+      save = new Save(key);
+      this.saves.set(key, save);
+    }
     if (save) {
       save.backup();
-    } else if (key.match(/^[\w\d-]+$/)) {
-      save = new Save(key);
-      save.backup();
-      this.saves.set(key, save);
+      this.currentKey = key;
+      this.saveSetting();
     }
   }
 
