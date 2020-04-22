@@ -6,8 +6,14 @@
   "main": "dist/index.js",
   "scripts": {
     "develop": "webpack --config webpack.ts && electron dist/index.js",
-    "build": "ts-node build.ts",
+    "build": "electron-builder",
     "start": "electron dist/index.js"
+  },
+  "build": {
+    "appId": "com.ziphil.rabi",
+    "win": {
+      "target": "portable"
+    }
   },
   "dependencies": {
     "bootstrap": "^4.4.1",
