@@ -84,9 +84,51 @@ export class Root extends Component<Props, State> {
     return node;
   }
 
-  public render(): ReactNode {
+  private renderChangeSave(): ReactNode {
     let keys = Array.from(this.state.manager.saves.keys());
     let currentKey = this.state.manager.currentKey;
+    let node = (
+      <Card className="zp-card">
+        <h5 className="bp3-heading">使用するセーブグループの変更</h5>
+        <FormGroup label="現在のセーブグループ名">
+          <InputGroup value={currentKey ?? ""} readOnly={true}/>
+        </FormGroup>
+        <FormGroup label="セーブグループ名">
+          <StringSelect items={keys} activeItem={this.state.changedKey} itemRenderer={this.renderKeyItem} filterable={false} onItemSelect={(key) => this.setState({changedKey: key})}>
+            <Button text={this.state.changedKey ?? " "} rightIcon="caret-down" alignText="left" fill={true}/>
+          </StringSelect>
+        </FormGroup>
+        <ButtonGroup className="zp-right-margin">
+          <Button text="変更" intent="primary" onClick={this.changeKey.bind(this)}/>
+        </ButtonGroup>
+        <ButtonGroup className="zp-right-margin">
+          <Button text="削除" intent="danger"/>
+        </ButtonGroup>
+        <ButtonGroup>
+          <Button text="コピーのみ" onClick={this.backupKey.bind(this)}/>
+          <Button text="利用のみ" onClick={this.useKey.bind(this)}/>
+        </ButtonGroup>
+      </Card>
+    );
+    return node;
+  }
+
+  private renderCreateSave(): ReactNode {
+    let node = (
+      <Card className="zp-card">
+        <h5 className="bp3-heading">新規セーブグループの作成</h5>
+        <FormGroup label="セーブグループ名">
+          <InputGroup value={this.state.createdKey} onChange={(event) => this.setState({createdKey: event.target.value})}/>
+        </FormGroup>
+        <ButtonGroup>
+          <Button text="作成" intent="primary" onClick={this.createKey.bind(this)}/>
+        </ButtonGroup>
+      </Card>
+    );
+    return node;
+  }
+
+  public render(): ReactNode {
     let node = (
       <div className="root">
         <div className="zp-title">
@@ -94,36 +136,8 @@ export class Root extends Component<Props, State> {
           <span className="bp3-text-muted">Save Manager for “Rabi-Ribi”</span>
         </div>
         <div className="zp-card-wrapper">
-          <Card className="zp-card">
-            <h5 className="bp3-heading">使用するセーブグループの変更</h5>
-            <FormGroup label="現在のセーブグループ名">
-              <InputGroup value={currentKey ?? ""} readOnly={true}/>
-            </FormGroup>
-            <FormGroup label="セーブグループ名">
-              <StringSelect items={keys} activeItem={this.state.changedKey} itemRenderer={this.renderKeyItem} filterable={false} onItemSelect={(key) => this.setState({changedKey: key})}>
-                <Button text={this.state.changedKey ?? " "} rightIcon="caret-down" alignText="left" fill={true}/>
-              </StringSelect>
-            </FormGroup>
-            <ButtonGroup className="zp-right-margin">
-              <Button text="変更" intent="primary" onClick={this.changeKey.bind(this)}/>
-            </ButtonGroup>
-            <ButtonGroup className="zp-right-margin">
-              <Button text="削除" intent="danger"/>
-            </ButtonGroup>
-            <ButtonGroup>
-              <Button text="コピーのみ" onClick={this.backupKey.bind(this)}/>
-              <Button text="利用のみ" onClick={this.useKey.bind(this)}/>
-            </ButtonGroup>
-          </Card>
-          <Card className="zp-card">
-            <h5 className="bp3-heading">新規セーブグループの作成</h5>
-            <FormGroup label="セーブグループ名">
-              <InputGroup value={this.state.createdKey} onChange={(event) => this.setState({createdKey: event.target.value})}/>
-            </FormGroup>
-            <ButtonGroup>
-              <Button text="作成" intent="primary" onClick={this.createKey.bind(this)}/>
-            </ButtonGroup>
-          </Card>
+          {this.renderChangeSave()}
+          {this.renderCreateSave()}
         </div>
       </div>
     );
