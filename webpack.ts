@@ -1,16 +1,16 @@
 //
 
-import * as CopyWebpackPlugin from "copy-webpack-plugin";
+import * as HtmlWebpackPlugin from "html-webpack-plugin";
 import * as path from "path";
 
 
 let main = {
   mode: "development",
   target: "electron-main",
-  entry: path.join(__dirname, "source", "index"),
+  entry: ["./main/index.ts"],
   output: {
-    filename: "index.js",
-    path: path.resolve(__dirname, "dist")
+    path: path.resolve(__dirname, "dist"),
+    filename: "index.js"
   },
   node: {
     __dirname: false,
@@ -20,13 +20,10 @@ let main = {
     rules: [
       {
         test: /.tsx?$/,
-        include: [path.resolve(__dirname, "source")],
-        exclude: [path.resolve(__dirname, "node_modules")],
-        use: [
-          {
-            loader: "ts-loader"
-          }
-        ]
+        exclude: /node_modules/,
+        use: {
+          loader: "ts-loader"
+        }
       }
     ]
   },
@@ -38,64 +35,79 @@ let main = {
 let renderer = {
   mode: "development",
   target: "electron-renderer",
-  entry: path.join(__dirname, "source", "renderer", "index"),
+  entry: ["./renderer/index.tsx"],
   output: {
-    filename: "index.js",
-    path: path.resolve(__dirname, "dist", "script")
+    path: path.join(__dirname, "dist"),
+    filename: "./script/index.bundle.js"
   },
-  node: {
-    __dirname: false,
-    __filename: false
-  },
+  devtool: "source-map",
   module: {
     rules: [
       {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      },
+      {
         test: /\.tsx?$/,
-        include: [path.resolve(__dirname, "source"), path.resolve(__dirname, "node_modules")],
-        use: [
-          {
-            loader: "ts-loader"
-          }
-        ]
+        exclude: /node_modules/,
+        use: {
+          loader: "ts-loader"
+        }
       },
       {
         test: /\.scss$/,
+        exclude: /node_modules/,
         use: [
           {
             loader: "style-loader"
           },
           {
-            loader: "css-loader"
-          },
-          {
-            loader: "postcss-loader",
-            options: {
-              plugins: () => {
-                return [require("precss"), require("autoprefixer")];
-              }
-            }
+            loader: "css-loader",
+            options: {url: false}
           },
           {
             loader: "sass-loader"
           }
         ]
+      },
+      {
+        test: /\.css/,
+        use: [
+          {
+            loader: "style-loader"
+          },
+          {
+            loader: "css-loader",
+            options: {url: false}
+          }
+        ]
+      },
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: {
+          loader: "source-map-loader"
+        }
       }
     ]
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js", ".jsx", ".scss", ".css"]
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"]
+  },
+  devServer: {
+    port: 3000,
+    historyApiFallback: true
   },
   plugins: [
-    new CopyWebpackPlugin(
-      [
-        {
-          context: "source",
-          from: "**/*.html",
-          to: path.resolve(__dirname, "dist")
-        }
-      ]
-    )
+    new HtmlWebpackPlugin({
+      template: "./renderer/index.html",
+      title: "Rajka"
+    })
   ]
 };
+
 
 export default [main, renderer];
