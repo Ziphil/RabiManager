@@ -5,6 +5,11 @@
 @import "~@blueprintjs/core/src/blueprint.scss";
 
 
+* {
+  user-select: none;
+  outline: none !important;
+}
+
 .bp3-popover-target {
   width: 100%;
 }
@@ -43,7 +48,3 @@
 .zp-right-margin {
   margin-right: $pt-grid-size * 1;
 }
-
- * {
-   outline: none !important;
- }
