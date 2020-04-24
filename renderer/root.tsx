@@ -86,7 +86,7 @@ export class Root extends Component<Props, State> {
 
   public render(): ReactNode {
     let keys = Array.from(this.state.manager.saves.keys());
-    let currentKey = this.state.manager.currentKey ?? "";
+    let currentKey = this.state.manager.currentKey;
     let node = (
       <div className="root">
         <div className="zp-title">
@@ -97,7 +97,7 @@ export class Root extends Component<Props, State> {
           <Card className="zp-card">
             <h5 className="bp3-heading">使用するセーブグループの変更</h5>
             <FormGroup label="現在のセーブグループ名">
-              <InputGroup value={currentKey} readOnly={true}/>
+              <InputGroup value={currentKey ?? ""} readOnly={true}/>
             </FormGroup>
             <FormGroup label="セーブグループ名">
               <StringSelect items={keys} activeItem={this.state.changedKey} itemRenderer={this.renderKeyItem} filterable={false} onItemSelect={(key) => this.setState({changedKey: key})}>
