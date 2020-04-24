@@ -3,7 +3,8 @@
 import {
   App,
   BrowserWindow,
-  app as electronApp
+  app as electronApp,
+  ipcMain
 } from "electron";
 
 
@@ -14,6 +15,7 @@ class Main {
 
   public constructor(app: App) {
     this.app = app;
+    this.setupIpc();
   }
 
   public main(): void {
@@ -22,8 +24,17 @@ class Main {
     this.app.on("window-all-closed", this.onWindowAllClosed.bind(this));
   }
 
+  private setupIpc(): void {
+    ipcMain.on("resize", (event, width, height) => {
+      if (this.window !== null) {
+        this.window.setContentSize(width, height);
+      }
+    });
+  }
+
   private createWindow(): void {
-    this.window = new BrowserWindow({width: 500, height: 600, autoHideMenuBar: true, acceptFirstMouse: true, webPreferences: {nodeIntegration: true}});
+    let options = {autoHideMenuBar: true, acceptFirstMouse: true, useContentSize: true, webPreferences: {nodeIntegration: true}};
+    this.window = new BrowserWindow({width: 500, height: 600, ...options});
     this.window.loadFile("./index.html");
     this.window.on("closed", () => {
       this.window = null;

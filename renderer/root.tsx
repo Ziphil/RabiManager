@@ -16,6 +16,9 @@ import {
   IItemRendererProps,
   Select
 } from "@blueprintjs/select";
+import {
+  ipcRenderer
+} from "electron";
 import * as react from "react";
 import {
   Component,
@@ -41,6 +44,7 @@ export class Root extends Component<Props, State> {
   public async componentDidMount(): Promise<void> {
     await this.state.manager.load();
     this.setState({ready: true});
+    ipcRenderer.send("resize", document.body.clientWidth, document.body.clientHeight);
   }
 
   private async changeKey(): Promise<void> {
