@@ -43,7 +43,8 @@ export class Root extends Component<Props, State> {
 
   public async componentDidMount(): Promise<void> {
     await this.state.manager.load();
-    this.setState({ready: true});
+    let currentKey = this.state.manager.currentKey;
+    this.setState({ready: true, changedKey: currentKey});
     ipcRenderer.send("resize", document.body.clientWidth, document.body.clientHeight);
   }
 
