@@ -14,8 +14,13 @@
   width: 100%;
 }
 
+body {
+  padding-top: $pt-navbar-height;
+}
+
 .root {
   padding: $pt-grid-size * 1.5;
+  padding-top: $pt-grid-size * 2.5;
   font-family: "Yu Gothic UI", "Meiryo UI", sans-serif;
 }
 

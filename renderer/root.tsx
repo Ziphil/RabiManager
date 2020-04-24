@@ -6,7 +6,11 @@ import {
   Card,
   FormGroup,
   InputGroup,
-  MenuItem
+  MenuItem,
+  Navbar,
+  NavbarDivider,
+  NavbarGroup,
+  NavbarHeading
 } from "@blueprintjs/core";
 import {
   IItemRendererProps,
@@ -131,10 +135,19 @@ export class Root extends Component<Props, State> {
   public render(): ReactNode {
     let node = (
       <div className="root">
-        <div className="zp-title">
-          <h2 className="bp3-heading">Zajka</h2>
-          <span className="bp3-text-muted">Save Manager for “Rabi-Ribi”</span>
-        </div>
+        <Navbar fixedToTop={true}>
+          <NavbarGroup align="left">
+            <NavbarHeading>
+              <strong>Zajka</strong><br/>
+              <small className="bp3-text-muted">Save Manager for “Rabi-Ribi”</small>
+            </NavbarHeading>
+            <NavbarDivider/>
+            <Button text="設定" minimal={true} icon="cog"/>
+          </NavbarGroup>
+          <NavbarGroup align="right">
+            <small className="bp3-text-muted">© 2020 Ziphil</small>
+          </NavbarGroup>
+        </Navbar>
         <div className="zp-card-wrapper">
           {this.renderChangeSave()}
           {this.renderCreateSave()}
