@@ -29,38 +29,49 @@ export class Root extends Component<Props, State> {
   public state: State = {
     manager: new SaveManager(),
     changedKey: null,
-    createdKey: ""
+    createdKey: "",
+    ready: false,
+    processing: false
   };
 
-  private changeKey(): void {
+  public async componentDidMount(): Promise<void> {
+    await this.state.manager.load();
+    this.setState({ready: true});
+  }
+
+  private async changeKey(): Promise<void> {
     let key = this.state.changedKey;
     if (key !== null) {
-      this.state.manager.change(key);
-      this.setState({manager: this.state.manager});
+      this.setState({processing: true});
+      await this.state.manager.change(key);
+      this.setState({processing: false, manager: this.state.manager});
     }
   }
 
-  private backupKey(): void {
+  private async backupKey(): Promise<void> {
     let key = this.state.changedKey;
     if (key !== null) {
-      this.state.manager.backup(key);
-      this.setState({manager: this.state.manager});
+      this.setState({processing: true});
+      await this.state.manager.backup(key);
+      this.setState({processing: false, manager: this.state.manager});
     }
   }
 
-  private useKey(): void {
+  private async useKey(): Promise<void> {
     let key = this.state.changedKey;
     if (key !== null) {
-      this.state.manager.use(key);
-      this.setState({manager: this.state.manager});
+      this.setState({processing: true});
+      await this.state.manager.use(key);
+      this.setState({processing: false, manager: this.state.manager});
     }
   }
 
-  private createKey(): void {
+  private async createKey(): Promise<void> {
     let key = this.state.createdKey;
     if (key !== null) {
-      this.state.manager.backup(key);
-      this.setState({manager: this.state.manager});
+      this.setState({processing: true});
+      await this.state.manager.backup(key);
+      this.setState({processing: false, manager: this.state.manager});
     }
   }
 
@@ -127,7 +138,9 @@ type Props = {
 type State = {
   manager: SaveManager,
   changedKey: string | null,
-  createdKey: string
+  createdKey: string,
+  ready: boolean,
+  processing: boolean
 };
 
 let StringSelect = Select.ofType<string>();

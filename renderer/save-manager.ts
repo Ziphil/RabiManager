@@ -1,6 +1,8 @@
 //
 
-import * as fs from "fs";
+import {
+  promises as fs
+} from "fs";
 import {
   join as joinPath
 } from "path";
@@ -18,47 +20,58 @@ export class Save {
     this.key = key;
   }
 
-  public backup(): void {
-    fs.mkdirSync(this.backupSavePath(), {recursive: true});
-    fs.mkdirSync(this.backupImagePath(), {recursive: true});
-    let sourceSaveFiles = fs.readdirSync(this.sourceSavePath()).filter((file) => file.match(/save(\d+)\.sav$/));
-    let sourceImageFiles = fs.readdirSync(this.sourceImagePath()).filter((file) => file.match(/save(\d+)_a\.bmp$/));
-    let backupSaveFiles = fs.readdirSync(this.backupSavePath()).filter((file) => file.match(/save(\d+)\.sav$/));
-    let backupImageFiles = fs.readdirSync(this.backupImagePath()).filter((file) => file.match(/save(\d+)_a\.bmp$/));
-    for (let file of backupSaveFiles) {
-      fs.unlinkSync(this.backupSavePath(file));
-    }
-    for (let file of backupImageFiles) {
-      fs.unlinkSync(this.backupImagePath(file));
-    }
-    for (let file of sourceSaveFiles) {
-      fs.copyFileSync(this.sourceSavePath(file), this.backupSavePath(file));
-    }
-    for (let file of sourceImageFiles) {
-      fs.copyFileSync(this.sourceImagePath(file), this.backupImagePath(file));
-    }
+  private async ensureBackupDirectories(): Promise<void> {
+    await fs.mkdir(this.path("backup", "save"), {recursive: true});
+    await fs.mkdir(this.path("backup", "image"), {recursive: true});
   }
 
-  public use(): void {
-    let sourceSaveFiles = fs.readdirSync(this.sourceSavePath()).filter((file) => file.match(/save(\d+)\.sav$/));
-    let sourceImageFiles = fs.readdirSync(this.sourceImagePath()).filter((file) => file.match(/save(\d+)_a\.bmp$/));
-    let backupSaveFiles = fs.readdirSync(this.backupSavePath()).filter((file) => file.match(/save(\d+)\.sav$/));
-    let backupImageFiles = fs.readdirSync(this.backupImagePath()).filter((file) => file.match(/save(\d+)_a\.bmp$/));
-    for (let file of sourceSaveFiles) {
-      fs.unlinkSync(this.sourceSavePath(file));
-    }
-    for (let file of sourceImageFiles) {
-      fs.unlinkSync(this.sourceImagePath(file));
-    }
-    for (let file of backupSaveFiles) {
-      fs.copyFileSync(this.backupSavePath(file), this.sourceSavePath(file));
-    }
-    for (let file of backupImageFiles) {
-      fs.copyFileSync(this.backupImagePath(file), this.sourceImagePath(file));
-    }
+  private async copy(targetPlace: "backup" | "source", type: "save" | "image"): Promise<void> {
+    let sourcePlace = Save.oppositePlace(targetPlace);
+    let regexp = (type === "save") ? /save(\d+)\.sav$/ : /save(\d+)_a\.bmp$/;
+    let sourceFiles = await fs.readdir(this.path(sourcePlace, type));
+    let targetFiles = await fs.readdir(this.path(targetPlace, type));
+    let filteredSourceFiles = sourceFiles.filter((file) => file.match(regexp));
+    let filteredTargetFiles = targetFiles.filter((file) => file.match(regexp));
+    let unlinkPromises = filteredTargetFiles.map((file) => {
+      let promise = fs.unlink(this.path(targetPlace, type, file));
+      return promise;
+    });
+    await Promise.all(unlinkPromises);
+    let copyPromises = filteredSourceFiles.map((file) => {
+      let promise = fs.copyFile(this.path(sourcePlace, type, file), this.path(targetPlace, type, file));
+      return promise;
+    });
+    await Promise.all(copyPromises);
   }
 
-  private createPath(paths: Array<string>, file?: string): string {
+  public async backup(): Promise<void> {
+    await this.ensureBackupDirectories();
+    await Promise.all([this.copy("backup", "save"), this.copy("backup", "image")]);
+  }
+
+  public async use(): Promise<void> {
+    await Promise.all([this.copy("source", "save"), this.copy("source", "image")]);
+  }
+
+  private path(place: "backup" | "source", type: "save" | "image", file?: string): string {
+    let path = "";
+    if (place === "backup") {
+      if (type === "save") {
+        path = Save.createPath([BACKUP_DIRECTORY, this.key], file);
+      } else {
+        path = Save.createPath([BACKUP_DIRECTORY, this.key, "image"], file);
+      }
+    } else {
+      if (type === "save") {
+        path = Save.createPath([STEAM_DIRECTORY], file);
+      } else {
+        path = Save.createPath([STEAM_DIRECTORY, "image"], file);
+      }
+    }
+    return path;
+  }
+
+  private static createPath(paths: Array<string>, file?: string): string {
     let nextPaths = Array.from(paths);
     if (file) {
       nextPaths.push(file);
@@ -67,20 +80,8 @@ export class Save {
     return path;
   }
 
-  private backupSavePath(file?: string): string {
-    return this.createPath([BACKUP_DIRECTORY, this.key], file);
-  }
-
-  private backupImagePath(file?: string): string {
-    return this.createPath([BACKUP_DIRECTORY, this.key, "image"], file);
-  }
-
-  private sourceSavePath(file?: string): string {
-    return this.createPath([STEAM_DIRECTORY], file);
-  }
-
-  private sourceImagePath(file?: string): string {
-    return this.createPath([STEAM_DIRECTORY, "image"], file);
+  private static oppositePlace(place: "backup" | "source"): "backup" | "source" {
+    return (place === "backup") ? "source" : "backup";
   }
 
 }
@@ -91,66 +92,69 @@ export class SaveManager {
   public currentKey: string | null = null;
   public saves: Map<string, Save> = new Map();
 
-  public constructor() {
-    this.ensureDirectory();
-    this.loadSaves();
-    this.loadSetting();
+  public async load(): Promise<void> {
+    await this.ensureBackupDirectory();
+    await Promise.all([this.loadSaves(), this.loadSetting()]);
   }
 
-  private ensureDirectory(): void {
-    fs.mkdirSync(BACKUP_DIRECTORY, {recursive: true});
+  private async ensureBackupDirectory(): Promise<void> {
+    await fs.mkdir(BACKUP_DIRECTORY, {recursive: true});
   }
 
-  private loadSaves(): void {
-    let keys = fs.readdirSync(BACKUP_DIRECTORY).filter((file) => fs.statSync(joinPath(BACKUP_DIRECTORY, file)).isDirectory());
+  private async loadSaves(): Promise<void> {
+    let files = await fs.readdir(BACKUP_DIRECTORY, {withFileTypes: true});
+    let keys = files.filter((file) => file.isDirectory()).map((file) => file.name);
     for (let key of keys) {
       let save = new Save(key);
       this.saves.set(key, save);
     }
   }
 
-  private loadSetting(): void {
+  private async loadSetting(): Promise<void> {
     let settingPath = joinPath(BACKUP_DIRECTORY, "setting.json");
-    if (fs.existsSync(settingPath)) {
-      let setting = JSON.parse(fs.readFileSync(settingPath).toString());
+    try {
+      let buffer = await fs.readFile(settingPath);
+      let setting = JSON.parse(buffer.toString());
       this.currentKey = setting.currentKey;
+    } catch (error) {
+      this.currentKey = null;
     }
   }
 
-  private saveSetting(): void {
+  private async saveSetting(): Promise<void> {
     let settingPath = joinPath(BACKUP_DIRECTORY, "setting.json");
     let setting = {} as any;
     setting.currentKey = this.currentKey;
-    fs.writeFileSync(settingPath, JSON.stringify(setting));
+    await fs.writeFile(settingPath, JSON.stringify(setting));
   }
 
-  public backup(key: string): void {
+  public async backup(key: string): Promise<void> {
     let save = this.saves.get(key);
     if (save === undefined && key.match(/^[\w\d-]+$/)) {
       save = new Save(key);
       this.saves.set(key, save);
     }
     if (save) {
-      save.backup();
       this.currentKey = key;
-      this.saveSetting();
+      await save.backup();
+      await this.saveSetting();
     }
   }
 
-  public use(key: string): void {
+  public async use(key: string): Promise<void> {
     let save = this.saves.get(key);
     if (save) {
-      save.use();
       this.currentKey = key;
-      this.saveSetting();
+      await save.use();
+      await this.saveSetting();
     }
   }
 
-  public change(key: string): void {
+  public async change(key: string): Promise<void> {
     if (this.currentKey) {
-      this.backup(this.currentKey);
+      await this.backup(this.currentKey);
     }
-    this.use(key);
+    await this.use(key);
   }
 
 }
