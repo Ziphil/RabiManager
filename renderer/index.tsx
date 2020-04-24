@@ -9,10 +9,6 @@ import {
 } from "./root";
 
 
-export const TITLES = ["ZpDIC", "Online"];
-export const VERSION = "2.4.0";
-
-
 class Main {
 
   public main(): void {
