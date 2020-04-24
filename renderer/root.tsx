@@ -103,14 +103,14 @@ export class Root extends Component<Props, State> {
           </StringSelect>
         </FormGroup>
         <ButtonGroup className="zp-right-margin">
-          <Button text="変更" intent="primary" onClick={this.changeKey.bind(this)}/>
+          <Button text="変更" intent="primary" icon="refresh" onClick={this.changeKey.bind(this)}/>
         </ButtonGroup>
         <ButtonGroup className="zp-right-margin">
-          <Button text="削除" intent="danger"/>
+          <Button text="削除" intent="danger" icon="delete"/>
         </ButtonGroup>
         <ButtonGroup>
-          <Button text="コピーのみ" onClick={this.backupKey.bind(this)}/>
-          <Button text="利用のみ" onClick={this.useKey.bind(this)}/>
+          <Button text="コピーのみ" icon="circle-arrow-right" onClick={this.backupKey.bind(this)}/>
+          <Button text="利用のみ" icon="circle-arrow-left" onClick={this.useKey.bind(this)}/>
         </ButtonGroup>
       </Card>
     );
@@ -125,7 +125,7 @@ export class Root extends Component<Props, State> {
           <InputGroup value={this.state.createdKey} onChange={(event) => this.setState({createdKey: event.target.value})}/>
         </FormGroup>
         <ButtonGroup>
-          <Button text="作成" intent="primary" onClick={this.createKey.bind(this)}/>
+          <Button text="作成" intent="primary" icon="add" onClick={this.createKey.bind(this)}/>
         </ButtonGroup>
       </Card>
     );
