@@ -36,7 +36,6 @@ export class Root extends Component<Props, State> {
   public state: State = {
     manager: new SaveManager(),
     changedKey: null,
-    createdKey: "",
     ready: false,
     processing: false
   };
@@ -75,15 +74,6 @@ export class Root extends Component<Props, State> {
     }
   }
 
-  private async createKey(): Promise<void> {
-    let key = this.state.createdKey;
-    if (key !== null) {
-      this.setState({processing: true});
-      await this.state.manager.backup(key);
-      this.setState({processing: false, manager: this.state.manager});
-    }
-  }
-
   private renderKeyItem(key: string, itemProps: IItemRendererProps): ReactElement {
     let node;
     let modifiers = itemProps.modifiers;
@@ -93,12 +83,30 @@ export class Root extends Component<Props, State> {
     return node;
   }
 
+  private renderNavbar(): ReactNode {
+    let node = (
+      <Navbar fixedToTop={true}>
+        <NavbarGroup align="left">
+          <NavbarHeading>
+            <strong>Zajka</strong><br/>
+            <small className="bp3-text-muted">Save Manager for “Rabi-Ribi”</small>
+          </NavbarHeading>
+          <NavbarDivider/>
+          <Button text="設定" minimal={true} icon="cog"/>
+        </NavbarGroup>
+        <NavbarGroup align="right">
+          <small className="bp3-text-muted">© 2020 Ziphil</small>
+        </NavbarGroup>
+      </Navbar>
+    );
+    return node;
+  }
+
   private renderChangeSave(): ReactNode {
     let keys = Array.from(this.state.manager.saves.keys());
     let currentKey = this.state.manager.currentKey;
     let node = (
-      <Card className="zp-card">
-        <h5 className="bp3-heading">使用するセーブグループの変更</h5>
+      <div>
         <FormGroup label="現在のセーブグループ名">
           <InputGroup value={currentKey ?? ""} readOnly={true}/>
         </FormGroup>
@@ -109,30 +117,15 @@ export class Root extends Component<Props, State> {
         </FormGroup>
         <ButtonGroup className="zp-right-margin">
           <Button text="変更" intent="primary" icon="refresh" onClick={this.changeKey.bind(this)}/>
+          <Button text="コピー" intent="primary" icon="circle-arrow-right" onClick={this.backupKey.bind(this)}/>
         </ButtonGroup>
         <ButtonGroup className="zp-right-margin">
+          <Button text="反映" intent="warning" icon="circle-arrow-left" onClick={this.useKey.bind(this)}/>
+        </ButtonGroup>
+        <ButtonGroup>
           <Button text="削除" intent="danger" icon="delete"/>
         </ButtonGroup>
-        <ButtonGroup>
-          <Button text="コピーのみ" icon="circle-arrow-right" onClick={this.backupKey.bind(this)}/>
-          <Button text="利用のみ" icon="circle-arrow-left" onClick={this.useKey.bind(this)}/>
-        </ButtonGroup>
-      </Card>
-    );
-    return node;
-  }
-
-  private renderCreateSave(): ReactNode {
-    let node = (
-      <Card className="zp-card">
-        <h5 className="bp3-heading">新規セーブグループの作成</h5>
-        <FormGroup label="セーブグループ名">
-          <InputGroup value={this.state.createdKey} onChange={(event) => this.setState({createdKey: event.target.value})}/>
-        </FormGroup>
-        <ButtonGroup>
-          <Button text="作成" intent="primary" icon="add" onClick={this.createKey.bind(this)}/>
-        </ButtonGroup>
-      </Card>
+      </div>
     );
     return node;
   }
@@ -140,23 +133,8 @@ export class Root extends Component<Props, State> {
   public render(): ReactNode {
     let node = (
       <div className="root">
-        <Navbar fixedToTop={true}>
-          <NavbarGroup align="left">
-            <NavbarHeading>
-              <strong>Zajka</strong><br/>
-              <small className="bp3-text-muted">Save Manager for “Rabi-Ribi”</small>
-            </NavbarHeading>
-            <NavbarDivider/>
-            <Button text="設定" minimal={true} icon="cog"/>
-          </NavbarGroup>
-          <NavbarGroup align="right">
-            <small className="bp3-text-muted">© 2020 Ziphil</small>
-          </NavbarGroup>
-        </Navbar>
-        <div className="zp-card-wrapper">
-          {this.renderChangeSave()}
-          {this.renderCreateSave()}
-        </div>
+        {this.renderNavbar()}
+        {this.renderChangeSave()}
       </div>
     );
     return node;
@@ -170,7 +148,6 @@ type Props = {
 type State = {
   manager: SaveManager,
   changedKey: string | null,
-  createdKey: string,
   ready: boolean,
   processing: boolean
 };

@@ -10,12 +10,12 @@
   outline: none !important;
 }
 
-.bp3-popover-target {
-  width: 100%;
-}
-
 body {
   padding-top: $pt-navbar-height;
+}
+
+.bp3-popover-target {
+  width: 100%;
 }
 
 .root {
@@ -30,20 +30,6 @@ body {
 
 .zp-title >h2 {
   margin: 0px;
-}
-
-.zp-card-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.zp-card:first-child {
-  margin-bottom: $pt-grid-size * 1.5;
-}
-
-.zp-card >h5 {
-  color: $pt-intent-primary;
-  margin-bottom: $pt-grid-size * 1.5;
 }
 
 .zp-right-margin {
