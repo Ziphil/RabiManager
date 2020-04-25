@@ -6,11 +6,13 @@ import {
   ControlGroup,
   FormGroup,
   InputGroup,
+  Menu,
   MenuItem,
   Navbar,
   NavbarDivider,
   NavbarGroup,
-  NavbarHeading
+  NavbarHeading,
+  Popover
 } from "@blueprintjs/core";
 import {
   IItemRendererProps,
@@ -93,6 +95,13 @@ export class Root extends Component<Props, State> {
           </NavbarHeading>
           <NavbarDivider/>
           <Button text="設定" minimal={true} icon="cog"/>
+          <Popover>
+            <Button text="開く" minimal={true} icon="folder-shared-open"/>
+            <Menu>
+              <MenuItem text="ゲームフォルダ" icon="folder-close"/>
+              <MenuItem text="保存フォルダ" icon="folder-close"/>
+            </Menu>
+          </Popover>
         </NavbarGroup>
         <NavbarGroup align="right">
           <small className="bp3-text-muted">© 2020 Ziphil</small>
