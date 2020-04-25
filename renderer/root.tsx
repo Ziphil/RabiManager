@@ -19,7 +19,8 @@ import {
   Select
 } from "@blueprintjs/select";
 import {
-  ipcRenderer
+  ipcRenderer,
+  shell
 } from "electron";
 import * as react from "react";
 import {
@@ -98,8 +99,8 @@ export class Root extends Component<Props, State> {
           <Popover>
             <Button text="開く" minimal={true} icon="folder-shared-open"/>
             <Menu>
-              <MenuItem text="ゲームフォルダ" icon="folder-close"/>
-              <MenuItem text="保存フォルダ" icon="folder-close"/>
+              <MenuItem text="ゲームフォルダ" icon="folder-close" onClick={() => shell.openItem(this.state.manager.steamDirectory)}/>
+              <MenuItem text="保存フォルダ" icon="folder-close" onClick={() => shell.openItem(this.state.manager.backupDirectory)}/>
             </Menu>
           </Popover>
         </NavbarGroup>
