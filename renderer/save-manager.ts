@@ -8,16 +8,18 @@ import {
 } from "path";
 
 
-const STEAM_DIRECTORY = "C:/Program Files (x86)/Steam/steamapps/common/Rabi-Ribi/save";
-const BACKUP_DIRECTORY = joinPath(process.env[(process.platform === "win32") ? "USERPROFILE" : "HOME"] ?? "", ".zajka");
+const DEFAULT_STEAM_DIRECTORY = "C:/Program Files (x86)/Steam/steamapps/common/Rabi-Ribi/save";
+const DEFAULT_BACKUP_DIRECTORY = joinPath(process.env[(process.platform === "win32") ? "USERPROFILE" : "HOME"] ?? "", ".zajka");
 
 
 export class Save {
 
   public key: string;
+  private manager: SaveManager;
 
-  public constructor(key: string) {
+  public constructor(key: string, manager: SaveManager) {
     this.key = key;
+    this.manager = manager;
   }
 
   private async ensureBackupDirectories(): Promise<void> {
@@ -57,15 +59,15 @@ export class Save {
     let path = "";
     if (place === "backup") {
       if (type === "save") {
-        path = Save.createPath([BACKUP_DIRECTORY, this.key], file);
+        path = Save.createPath([this.manager.backupDirectory, this.key], file);
       } else {
-        path = Save.createPath([BACKUP_DIRECTORY, this.key, "image"], file);
+        path = Save.createPath([this.manager.backupDirectory, this.key, "image"], file);
       }
     } else {
       if (type === "save") {
-        path = Save.createPath([STEAM_DIRECTORY], file);
+        path = Save.createPath([this.manager.steamDirectory], file);
       } else {
-        path = Save.createPath([STEAM_DIRECTORY, "image"], file);
+        path = Save.createPath([this.manager.steamDirectory, "image"], file);
       }
     }
     return path;
@@ -89,8 +91,16 @@ export class Save {
 
 export class SaveManager {
 
-  public currentKey: string | null = null;
+  public currentKey: string | null;
+  public steamDirectory: string;
+  public backupDirectory: string;
   public saves: Map<string, Save> = new Map();
+
+  public constructor() {
+    this.currentKey = null;
+    this.steamDirectory = DEFAULT_STEAM_DIRECTORY;
+    this.backupDirectory = DEFAULT_BACKUP_DIRECTORY;
+  }
 
   public async load(): Promise<void> {
     await this.ensureBackupDirectory();
@@ -98,40 +108,49 @@ export class SaveManager {
   }
 
   private async ensureBackupDirectory(): Promise<void> {
-    await fs.mkdir(BACKUP_DIRECTORY, {recursive: true});
+    await fs.mkdir(this.backupDirectory, {recursive: true});
   }
 
   private async loadSaves(): Promise<void> {
-    let files = await fs.readdir(BACKUP_DIRECTORY, {withFileTypes: true});
+    let files = await fs.readdir(this.backupDirectory, {withFileTypes: true});
     let keys = files.filter((file) => file.isDirectory()).map((file) => file.name);
     for (let key of keys) {
-      let save = new Save(key);
+      let save = new Save(key, this);
       this.saves.set(key, save);
     }
   }
 
   private async loadSetting(): Promise<void> {
-    let settingPath = joinPath(BACKUP_DIRECTORY, "setting.json");
+    let settingPath = joinPath(this.backupDirectory, "setting.json");
     try {
       let buffer = await fs.readFile(settingPath);
       let setting = JSON.parse(buffer.toString());
-      this.currentKey = setting.currentKey;
+      if (setting.currentKey !== undefined) {
+        this.currentKey = setting.currentKey;
+      }
+      if (setting.steamDirectory !== undefined) {
+        this.steamDirectory = setting.steamDirectory;
+      }
+      if (setting.backupDirectory !== undefined) {
+        this.backupDirectory = setting.backupDirectory;
+      }
     } catch (error) {
-      this.currentKey = null;
     }
   }
 
   private async saveSetting(): Promise<void> {
-    let settingPath = joinPath(BACKUP_DIRECTORY, "setting.json");
+    let settingPath = joinPath(this.backupDirectory, "setting.json");
     let setting = {} as any;
     setting.currentKey = this.currentKey;
+    setting.steamDirectory = this.steamDirectory;
+    setting.backupDirectory = this.backupDirectory;
     await fs.writeFile(settingPath, JSON.stringify(setting));
   }
 
   public async backup(key: string): Promise<void> {
     let save = this.saves.get(key);
     if (save === undefined && key.match(/^[\w\d-]+$/)) {
-      save = new Save(key);
+      save = new Save(key, this);
       this.saves.set(key, save);
     }
     if (save) {
