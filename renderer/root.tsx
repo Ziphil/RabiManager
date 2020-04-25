@@ -107,6 +107,7 @@ export class Root extends Component<Props, State> {
     let currentKey = this.state.manager.currentKey;
     let node = (
       <div>
+        <h5 className="bp3-heading zp-heading">セーブグループの変更</h5>
         <FormGroup label="現在のセーブグループ名">
           <InputGroup value={currentKey ?? ""} readOnly={true}/>
         </FormGroup>
