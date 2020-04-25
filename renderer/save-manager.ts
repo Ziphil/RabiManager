@@ -27,7 +27,7 @@ export class Save {
     await fs.mkdir(this.path("backup", "image"), {recursive: true});
   }
 
-  private async copy(targetPlace: "backup" | "source", type: "save" | "image"): Promise<void> {
+  private async copy(targetPlace: "backup" | "steam", type: "save" | "image"): Promise<void> {
     let sourcePlace = Save.oppositePlace(targetPlace);
     let regexp = (type === "save") ? /save(\d+)\.sav$/ : /save(\d+)_a\.bmp$/;
     let sourceFiles = await fs.readdir(this.path(sourcePlace, type));
@@ -52,10 +52,10 @@ export class Save {
   }
 
   public async use(): Promise<void> {
-    await Promise.all([this.copy("source", "save"), this.copy("source", "image")]);
+    await Promise.all([this.copy("steam", "save"), this.copy("steam", "image")]);
   }
 
-  private path(place: "backup" | "source", type: "save" | "image", file?: string): string {
+  private path(place: "backup" | "steam", type: "save" | "image", file?: string): string {
     let path = "";
     if (place === "backup") {
       if (type === "save") {
@@ -82,8 +82,8 @@ export class Save {
     return path;
   }
 
-  private static oppositePlace(place: "backup" | "source"): "backup" | "source" {
-    return (place === "backup") ? "source" : "backup";
+  private static oppositePlace(place: "backup" | "steam"): "backup" | "steam" {
+    return (place === "backup") ? "steam" : "backup";
   }
 
 }
