@@ -3,7 +3,7 @@
 import {
   Button,
   ButtonGroup,
-  Card,
+  ControlGroup,
   FormGroup,
   InputGroup,
   MenuItem,
@@ -35,7 +35,7 @@ export class Root extends Component<Props, State> {
 
   public state: State = {
     manager: new SaveManager(),
-    changedKey: null,
+    nextKey: null,
     ready: false,
     processing: false
   };
@@ -43,12 +43,12 @@ export class Root extends Component<Props, State> {
   public async componentDidMount(): Promise<void> {
     await this.state.manager.load();
     let currentKey = this.state.manager.currentKey;
-    this.setState({ready: true, changedKey: currentKey});
+    this.setState({ready: true, nextKey: currentKey});
     ipcRenderer.send("resize", document.body.clientWidth, document.body.clientHeight);
   }
 
   private async changeKey(): Promise<void> {
-    let key = this.state.changedKey;
+    let key = this.state.nextKey;
     if (key !== null) {
       this.setState({processing: true});
       await this.state.manager.change(key);
@@ -57,7 +57,7 @@ export class Root extends Component<Props, State> {
   }
 
   private async backupKey(): Promise<void> {
-    let key = this.state.changedKey;
+    let key = this.state.nextKey;
     if (key !== null) {
       this.setState({processing: true});
       await this.state.manager.backup(key);
@@ -66,7 +66,7 @@ export class Root extends Component<Props, State> {
   }
 
   private async useKey(): Promise<void> {
-    let key = this.state.changedKey;
+    let key = this.state.nextKey;
     if (key !== null) {
       this.setState({processing: true});
       await this.state.manager.use(key);
@@ -111,8 +111,11 @@ export class Root extends Component<Props, State> {
           <InputGroup value={currentKey ?? ""} readOnly={true}/>
         </FormGroup>
         <FormGroup label="セーブグループ名">
-          <StringSelect items={keys} activeItem={this.state.changedKey} itemRenderer={this.renderKeyItem} filterable={false} onItemSelect={(key) => this.setState({changedKey: key})}>
-            <Button text={this.state.changedKey ?? " "} rightIcon="caret-down" alignText="left" fill={true}/>
+          <StringSelect items={keys} activeItem={this.state.nextKey} itemRenderer={this.renderKeyItem} filterable={false} popoverProps={{position: "auto"}} onItemSelect={(key) => this.setState({nextKey: key})}>
+            <ControlGroup fill={true}>
+              <InputGroup value={this.state.nextKey ?? ""} fill={true} onChange={(event) => this.setState({nextKey: event.target.value})}/>
+              <Button icon="double-caret-vertical"/>
+            </ControlGroup>
           </StringSelect>
         </FormGroup>
         <ButtonGroup className="zp-right-margin">
@@ -147,7 +150,7 @@ type Props = {
 };
 type State = {
   manager: SaveManager,
-  changedKey: string | null,
+  nextKey: string | null,
   ready: boolean,
   processing: boolean
 };
