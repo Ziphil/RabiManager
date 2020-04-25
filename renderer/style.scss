@@ -42,3 +42,10 @@ h5.zp-heading {
 .zp-right-margin {
   margin-right: $pt-grid-size * 1;
 }
+
+.zp-divider {
+  margin-top: $pt-grid-size * 2;
+  margin-bottom: $pt-grid-size * 2;
+  margin-left: 0px;
+  margin-right: 0px;
+}

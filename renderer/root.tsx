@@ -4,6 +4,7 @@ import {
   Button,
   ButtonGroup,
   ControlGroup,
+  Divider,
   FormGroup,
   InputGroup,
   Menu,
@@ -139,6 +140,11 @@ export class Root extends Component<Props, State> {
         <ButtonGroup>
           <Button text="削除" intent="danger" icon="delete"/>
         </ButtonGroup>
+        <Divider className="zp-divider"/>
+        <h5 className="bp3-heading zp-heading">セーブグループの詳細</h5>
+        <div>
+          実装中…
+        </div>
       </div>
     );
     return node;
