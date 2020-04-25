@@ -116,6 +116,7 @@ export class Root extends Component<Props, State> {
   private renderChangeSave(): ReactNode {
     let keys = Array.from(this.state.manager.saves.keys());
     let currentKey = this.state.manager.currentKey;
+    let popoverProps = {position: "auto-start", minimal: true} as const;
     let node = (
       <div>
         <h5 className="bp3-heading zp-heading">セーブグループの変更</h5>
@@ -123,7 +124,7 @@ export class Root extends Component<Props, State> {
           <InputGroup value={currentKey ?? ""} readOnly={true}/>
         </FormGroup>
         <FormGroup label="セーブグループ名">
-          <StringSelect items={keys} activeItem={this.state.nextKey} itemRenderer={this.renderKeyItem} filterable={false} popoverProps={{position: "auto"}} onItemSelect={(key) => this.setState({nextKey: key})}>
+          <StringSelect items={keys} activeItem={this.state.nextKey} itemRenderer={this.renderKeyItem} filterable={false} popoverProps={popoverProps} onItemSelect={(key) => this.setState({nextKey: key})}>
             <ControlGroup fill={true}>
               <InputGroup value={this.state.nextKey ?? ""} fill={true} onChange={(event) => this.setState({nextKey: event.target.value})}/>
               <Button icon="double-caret-vertical"/>
@@ -132,9 +133,9 @@ export class Root extends Component<Props, State> {
         </FormGroup>
         <ButtonGroup className="zp-right-margin">
           <Button text="変更" intent="primary" icon="refresh" onClick={this.changeKey.bind(this)}/>
-          <Button text="コピー" intent="primary" icon="circle-arrow-right" onClick={this.backupKey.bind(this)}/>
         </ButtonGroup>
         <ButtonGroup className="zp-right-margin">
+          <Button text="コピー" intent="warning" icon="circle-arrow-right" onClick={this.backupKey.bind(this)}/>
           <Button text="反映" intent="warning" icon="circle-arrow-left" onClick={this.useKey.bind(this)}/>
         </ButtonGroup>
         <ButtonGroup>
