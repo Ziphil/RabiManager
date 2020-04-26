@@ -45,7 +45,9 @@
     "no-parameter-properties": true,
     "no-reference": true,
     "no-reference-import": true,
-    "no-shadowed-variable": true,
+    "no-shadowed-variable": [true, {
+      "underscore": false
+    }],
     "no-string-throw": true,
     "no-switch-case-fall-through": true,
     "no-trailing-whitespace": true,
