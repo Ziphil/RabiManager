@@ -7,10 +7,10 @@ import {
 
 export class SaveLocation {
 
-  public backupSaveDirectory: string;
-  public backupImageDirectory: string;
-  public steamSaveDirectory: string;
-  public steamImageDirectory: string;
+  private backupSaveDirectory: string;
+  private backupImageDirectory: string;
+  private steamSaveDirectory: string;
+  private steamImageDirectory: string;
 
   public constructor(backupSaveDirectory: string, backupImageDirectory: string, steamSaveDirectory: string, steamImageDirectory: string) {
     this.backupSaveDirectory = backupSaveDirectory;
