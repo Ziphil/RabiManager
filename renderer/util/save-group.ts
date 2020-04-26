@@ -9,6 +9,9 @@ import {
 import {
   SaveManager
 } from "./save-manager";
+import {
+  SaveParser
+} from "./save-parser";
 
 
 export class SaveGroup {
@@ -33,6 +36,12 @@ export class SaveGroup {
         this.saves.set(number, true);
       }
     }
+  }
+
+  public async loadDetail(number: number): Promise<void> {
+    let parser = new SaveParser(this.location.get("backup", "save", `save${number}.sav`));
+    let result = await parser.parse();
+    console.log(result);
   }
 
   private async ensureBackupDirectories(): Promise<void> {

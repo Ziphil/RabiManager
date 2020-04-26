@@ -152,7 +152,7 @@ export class Root extends Component<Props, State> {
       let rowButtonNodes = Array.from({length: 10}, (_, column) => {
         let number = row * 10 + column + 1;
         let save = saveGroup?.saves.get(number);
-        let rowButtonNode = <Button text={number} key={number} disabled={save === undefined} fill={true}/>;
+        let rowButtonNode = <Button text={number} key={number} disabled={save === undefined} fill={true} onClick={() => saveGroup?.loadDetail(number)}/>;
         return rowButtonNode;
       });
       let buttonNode = (
