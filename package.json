@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "develop": "webpack --watch --mode development --config webpack.ts",
-    "build": "electron-builder",
+    "build": "webpack --mode production --config webpack.ts",
     "start": "electron dist/index.js"
   },
   "build": {
