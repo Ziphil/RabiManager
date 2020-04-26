@@ -1,5 +1,6 @@
 //
 
+import * as electronReload from "electron-reload-webpack-plugin";
 import * as HtmlWebpackPlugin from "html-webpack-plugin";
 import * as path from "path";
 
@@ -105,7 +106,11 @@ let renderer = {
     new HtmlWebpackPlugin({
       template: "./renderer/index.html",
       title: "Rajka"
-    })
+    }),
+    electronReload({
+      path: path.join(__dirname, "dist", "index.js"),
+      logLevel: 0
+    })()
   ]
 };
 

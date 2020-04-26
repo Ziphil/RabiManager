@@ -6,6 +6,9 @@ import {
   app as electronApp,
   ipcMain
 } from "electron";
+import {
+  client
+} from "electron-connect";
 
 
 class Main {
@@ -43,6 +46,7 @@ class Main {
 
   private onReady(): void {
     this.createWindow();
+    client.create(this.window);
   }
 
   private onActivated(): void {

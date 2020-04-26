@@ -5,7 +5,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "develop": "webpack --config webpack.ts && electron dist/index.js",
+    "develop": "webpack --watch --mode development --config webpack.ts",
     "build": "electron-builder",
     "start": "electron dist/index.js"
   },
@@ -18,6 +18,7 @@
   "dependencies": {
     "@blueprintjs/core": "^3.26.0",
     "@blueprintjs/select": "^3.12.2",
+    "electron-connect": "^0.6.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
@@ -30,8 +31,10 @@
     "css-loader": "^3.5.2",
     "electron": "^8.2.3",
     "electron-builder": "^22.5.1",
+    "electron-reload-webpack-plugin": "^2.0.4",
     "html-webpack-plugin": "^4.2.0",
     "node-sass": "^4.13.1",
+    "npm-run-all": "^4.1.5",
     "postcss-loader": "^3.0.0",
     "precss": "^4.0.0",
     "sass-loader": "^8.0.2",
