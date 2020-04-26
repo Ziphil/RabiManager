@@ -82,7 +82,7 @@ export class Root extends Component<Props, State> {
     let node;
     let modifiers = itemProps.modifiers;
     if (modifiers.matchesPredicate) {
-      node = <MenuItem text={key} active={modifiers.active} onClick={itemProps.handleClick}/>;
+      node = <MenuItem text={key} key={key} active={modifiers.active} onClick={itemProps.handleClick}/>;
     }
     return node;
   }
@@ -156,7 +156,7 @@ export class Root extends Component<Props, State> {
         return rowButtonNode;
       });
       let buttonNode = (
-        <ButtonGroup fill={true}>
+        <ButtonGroup key={row} fill={true}>
           {rowButtonNodes}
         </ButtonGroup>
       );
