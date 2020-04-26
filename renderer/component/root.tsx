@@ -151,8 +151,8 @@ export class Root extends Component<Props, State> {
     let buttonNodes = Array.from({length: 3}, (_, row) => {
       let rowButtonNodes = Array.from({length: 10}, (_, column) => {
         let number = row * 10 + column + 1;
-        let disabled = !saveGroup?.saves.get(number);
-        let rowButtonNode = <Button text={number} key={number} disabled={disabled} fill={true}/>;
+        let save = saveGroup?.saves.get(number);
+        let rowButtonNode = <Button text={number} key={number} disabled={save === undefined} fill={true}/>;
         return rowButtonNode;
       });
       let buttonNode = (

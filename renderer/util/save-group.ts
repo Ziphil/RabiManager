@@ -16,7 +16,7 @@ export class SaveGroup {
   public key: string;
   public location: SaveLocation;
   private manager: SaveManager;
-  public saves: Map<number, boolean>;
+  public saves: Map<number, true>;
 
   public constructor(key: string, location: SaveLocation, manager: SaveManager) {
     this.key = key;
@@ -29,7 +29,9 @@ export class SaveGroup {
     let files = await fs.readdir(this.location.get("backup", "save"), {withFileTypes: true});
     for (let number = 0 ; number <= 30 ; number ++) {
       let exists = files.find((file) => file.name === `save${number}.sav`) !== undefined;
-      this.saves.set(number, exists);
+      if (exists) {
+        this.saves.set(number, true);
+      }
     }
   }
 
