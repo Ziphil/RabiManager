@@ -6,7 +6,7 @@ import {
 } from "react-dom";
 import {
   Root
-} from "./root";
+} from "./component/root";
 
 
 class Main {

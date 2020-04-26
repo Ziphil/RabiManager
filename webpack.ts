@@ -104,7 +104,7 @@ let renderer = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./renderer/index.html",
+      template: "./renderer/public/index.html",
       title: "Rajka"
     }),
     electronReload({
