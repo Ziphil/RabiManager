@@ -15,17 +15,19 @@ const DEFAULT_BACKUP_DIRECTORY = joinPath(process.env[(process.platform === "win
 export class SaveGroup {
 
   public key: string;
-  public saves: Map<number, boolean>;
+  public location: SaveLocation;
   private manager: SaveManager;
+  public saves: Map<number, boolean>;
 
-  public constructor(key: string, manager: SaveManager) {
+  public constructor(key: string, location: SaveLocation, manager: SaveManager) {
     this.key = key;
-    this.saves = new Map();
+    this.location = location;
     this.manager = manager;
+    this.saves = new Map();
   }
 
   public async load(): Promise<void> {
-    let files = await fs.readdir(this.path("backup", "save"), {withFileTypes: true});
+    let files = await fs.readdir(this.location.get("backup", "save"), {withFileTypes: true});
     for (let number = 0 ; number <= 30 ; number ++) {
       let exists = files.find((file) => file.name === `save${number}.sav`) !== undefined;
       this.saves.set(number, exists);
@@ -33,24 +35,24 @@ export class SaveGroup {
   }
 
   private async ensureBackupDirectories(): Promise<void> {
-    await fs.mkdir(this.path("backup", "save"), {recursive: true});
-    await fs.mkdir(this.path("backup", "image"), {recursive: true});
+    await fs.mkdir(this.location.get("backup", "save"), {recursive: true});
+    await fs.mkdir(this.location.get("backup", "image"), {recursive: true});
   }
 
   private async copy(targetPlace: "backup" | "steam", type: "save" | "image"): Promise<void> {
-    let sourcePlace = SaveGroup.oppositePlace(targetPlace);
+    let sourcePlace = SaveLocation.oppositePlace(targetPlace);
     let regexp = (type === "save") ? /save(\d+)\.sav$/ : /save(\d+)_a\.bmp$/;
-    let sourceFiles = await fs.readdir(this.path(sourcePlace, type));
-    let targetFiles = await fs.readdir(this.path(targetPlace, type));
+    let sourceFiles = await fs.readdir(this.location.get(sourcePlace, type));
+    let targetFiles = await fs.readdir(this.location.get(targetPlace, type));
     let filteredSourceFiles = sourceFiles.filter((file) => file.match(regexp));
     let filteredTargetFiles = targetFiles.filter((file) => file.match(regexp));
     let unlinkPromises = filteredTargetFiles.map((file) => {
-      let promise = fs.unlink(this.path(targetPlace, type, file));
+      let promise = fs.unlink(this.location.get(targetPlace, type, file));
       return promise;
     });
     await Promise.all(unlinkPromises);
     let copyPromises = filteredSourceFiles.map((file) => {
-      let promise = fs.copyFile(this.path(sourcePlace, type, file), this.path(targetPlace, type, file));
+      let promise = fs.copyFile(this.location.get(sourcePlace, type, file), this.location.get(targetPlace, type, file));
       return promise;
     });
     await Promise.all(copyPromises);
@@ -63,37 +65,6 @@ export class SaveGroup {
 
   public async use(): Promise<void> {
     await Promise.all([this.copy("steam", "save"), this.copy("steam", "image")]);
-  }
-
-  private path(place: "backup" | "steam", type: "save" | "image", file?: string): string {
-    let path = "";
-    if (place === "backup") {
-      if (type === "save") {
-        path = SaveGroup.createPath([this.manager.backupDirectory, this.key], file);
-      } else {
-        path = SaveGroup.createPath([this.manager.backupDirectory, this.key, "image"], file);
-      }
-    } else {
-      if (type === "save") {
-        path = SaveGroup.createPath([this.manager.steamDirectory], file);
-      } else {
-        path = SaveGroup.createPath([this.manager.steamDirectory, "image"], file);
-      }
-    }
-    return path;
-  }
-
-  private static createPath(paths: Array<string>, file?: string): string {
-    let nextPaths = Array.from(paths);
-    if (file) {
-      nextPaths.push(file);
-    }
-    let path = joinPath(...nextPaths);
-    return path;
-  }
-
-  private static oppositePlace(place: "backup" | "steam"): "backup" | "steam" {
-    return (place === "backup") ? "steam" : "backup";
   }
 
 }
@@ -126,7 +97,8 @@ export class SaveManager {
     let files = await fs.readdir(this.backupDirectory, {withFileTypes: true});
     let keys = files.filter((file) => file.isDirectory()).map((file) => file.name);
     for (let key of keys) {
-      let saveGroup = new SaveGroup(key, this);
+      let location = this.createLocation(key);
+      let saveGroup = new SaveGroup(key, location, this);
       await saveGroup.load();
       this.saveGroups.set(key, saveGroup);
     }
@@ -162,7 +134,8 @@ export class SaveManager {
   public async backup(key: string): Promise<void> {
     let saveGroup = this.saveGroups.get(key);
     if (saveGroup === undefined && key.match(/^[\w\d-]+$/)) {
-      saveGroup = new SaveGroup(key, this);
+      let location = this.createLocation(key);
+      saveGroup = new SaveGroup(key, location, this);
       this.saveGroups.set(key, saveGroup);
     }
     if (saveGroup) {
@@ -189,4 +162,53 @@ export class SaveManager {
     await this.use(key);
   }
 
+  private createLocation(key: string): SaveLocation {
+    let backupSaveDirectory = joinPath(this.backupDirectory, key);
+    let backupImageDirectory = joinPath(this.backupDirectory, key, "image");
+    let steamSaveDirectory = joinPath(this.steamDirectory);
+    let steamImageDirectory = joinPath(this.steamDirectory, "image");
+    let location = new SaveLocation(backupSaveDirectory, backupImageDirectory, steamSaveDirectory, steamImageDirectory);
+    return location;
+  }
+
 }
+
+
+export class SaveLocation {
+
+  public backupSaveDirectory: string;
+  public backupImageDirectory: string;
+  public steamSaveDirectory: string;
+  public steamImageDirectory: string;
+
+  public constructor(backupSaveDirectory: string, backupImageDirectory: string, steamSaveDirectory: string, steamImageDirectory: string) {
+    this.backupSaveDirectory = backupSaveDirectory;
+    this.backupImageDirectory = backupImageDirectory;
+    this.steamSaveDirectory = steamSaveDirectory;
+    this.steamImageDirectory = steamImageDirectory;
+  }
+
+  public get(place: SavePlace, type: SaveType, file?: string): string {
+    let directory = "";
+    if (place === "backup") {
+      directory = (type === "save") ? this.backupSaveDirectory : this.backupImageDirectory;
+    } else {
+      directory = (type === "save") ? this.steamSaveDirectory : this.steamImageDirectory;
+    }
+    let paths = [directory];
+    if (file !== undefined) {
+      paths.push(file);
+    }
+    let path = joinPath(...paths);
+    return path;
+  }
+
+  public static oppositePlace(place: SavePlace): SavePlace {
+    return (place === "backup") ? "steam" : "backup";
+  }
+
+}
+
+
+type SavePlace = "backup" | "steam";
+type SaveType = "save" | "image";
