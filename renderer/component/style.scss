@@ -16,6 +16,7 @@ $pt-font-family-monospace: monospace;
 
 body {
   padding-top: $pt-navbar-height;
+  overflow: hidden;
 }
 
 .bp3-popover-target {
