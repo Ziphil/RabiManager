@@ -15,11 +15,21 @@ const DEFAULT_BACKUP_DIRECTORY = joinPath(process.env[(process.platform === "win
 export class Save {
 
   public key: string;
+  public saves: Map<number, boolean>;
   private manager: SaveManager;
 
   public constructor(key: string, manager: SaveManager) {
     this.key = key;
+    this.saves = new Map();
     this.manager = manager;
+  }
+
+  public async load(): Promise<void> {
+    let files = await fs.readdir(this.path("backup", "save"), {withFileTypes: true});
+    for (let number = 0 ; number <= 30 ; number ++) {
+      let exists = files.find((file) => file.name === `save${number}.sav`) !== undefined;
+      this.saves.set(number, exists);
+    }
   }
 
   private async ensureBackupDirectories(): Promise<void> {
@@ -94,12 +104,13 @@ export class SaveManager {
   public currentKey: string | null;
   public steamDirectory: string;
   public backupDirectory: string;
-  public saves: Map<string, Save> = new Map();
+  public saves: Map<string, Save>;
 
   public constructor() {
     this.currentKey = null;
     this.steamDirectory = DEFAULT_STEAM_DIRECTORY;
     this.backupDirectory = DEFAULT_BACKUP_DIRECTORY;
+    this.saves = new Map();
   }
 
   public async load(): Promise<void> {
@@ -116,6 +127,7 @@ export class SaveManager {
     let keys = files.filter((file) => file.isDirectory()).map((file) => file.name);
     for (let key of keys) {
       let save = new Save(key, this);
+      await save.load();
       this.saves.set(key, save);
     }
   }
@@ -156,6 +168,7 @@ export class SaveManager {
     if (save) {
       this.currentKey = key;
       await save.backup();
+      await save.load();
       await this.saveSetting();
     }
   }

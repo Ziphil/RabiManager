@@ -147,12 +147,14 @@ export class Root extends Component<Props, State> {
   }
 
   private renderViewSave(): ReactNode {
+    let save = this.state.manager.saves.get(this.state.nextKey ?? "");
     let buttonNodes = new Array<ReactNode>();
     for (let row = 0 ; row < 3 ; row ++) {
       let rowButtonNodes = new Array<ReactNode>();
       for (let column = 0 ; column < 10 ; column ++) {
         let number = row * 10 + column + 1;
-        let rowButtonNode = <Button text={number} key={number} fill={true}/>;
+        let disabled = !save?.saves.get(number);
+        let rowButtonNode = <Button text={number} key={number} disabled={disabled} fill={true}/>;
         rowButtonNodes.push(rowButtonNode);
       }
       let buttonNode = (
