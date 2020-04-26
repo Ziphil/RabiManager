@@ -135,17 +135,41 @@ export class Root extends Component<Props, State> {
           <Button text="変更" intent="primary" icon="refresh" onClick={this.changeKey.bind(this)}/>
         </ButtonGroup>
         <ButtonGroup className="zp-right-margin">
-          <Button text="コピー" intent="warning" icon="circle-arrow-right" onClick={this.backupKey.bind(this)}/>
-          <Button text="反映" intent="warning" icon="circle-arrow-left" onClick={this.useKey.bind(this)}/>
+          <Button text="コピー" icon="circle-arrow-right" onClick={this.backupKey.bind(this)}/>
+          <Button text="反映" icon="circle-arrow-left" onClick={this.useKey.bind(this)}/>
         </ButtonGroup>
         <ButtonGroup>
           <Button text="削除" intent="danger" icon="delete"/>
         </ButtonGroup>
-        <Divider className="zp-divider"/>
+      </div>
+    );
+    return node;
+  }
+
+  private renderViewSave(): ReactNode {
+    let buttonNodes = new Array<ReactNode>();
+    for (let row = 0 ; row < 3 ; row ++) {
+      let rowButtonNodes = new Array<ReactNode>();
+      for (let column = 0 ; column < 10 ; column ++) {
+        let number = row * 10 + column + 1;
+        let rowButtonNode = <Button text={number} key={number} fill={true}/>;
+        rowButtonNodes.push(rowButtonNode);
+      }
+      let buttonNode = (
+        <ButtonGroup fill={true}>
+          {rowButtonNodes}
+        </ButtonGroup>
+      );
+      buttonNodes.push(buttonNode);
+    }
+    let node = (
+      <div>
         <h5 className="bp3-heading zp-heading">セーブグループの詳細</h5>
-        <div>
-          実装中…
-        </div>
+        <FormGroup className="zp-no-margin" label="セーブデータ情報">
+          <div className="zp-vert-group">
+            {buttonNodes}
+          </div>
+        </FormGroup>
       </div>
     );
     return node;
@@ -155,7 +179,11 @@ export class Root extends Component<Props, State> {
     let node = (
       <div className="root">
         {this.renderNavbar()}
-        {this.renderChangeSave()}
+        <div>
+          {this.renderChangeSave()}
+          <Divider className="zp-divider"/>
+          {this.renderViewSave()}
+        </div>
       </div>
     );
     return node;

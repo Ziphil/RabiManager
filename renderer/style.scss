@@ -44,9 +44,36 @@ h5.zp-heading {
   margin-right: $pt-grid-size * 1;
 }
 
+.zp-no-margin {
+  margin: 0px;
+}
+
 .zp-divider {
   margin-top: $pt-grid-size * 2;
   margin-bottom: $pt-grid-size * 2;
   margin-left: 0px;
   margin-right: 0px;
+}
+
+.zp-vert-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.zp-vert-group >*:not(:first-child):not(:last-child) >* {
+  border-radius: 0px;
+}
+
+.zp-vert-group >*:first-child >* {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.zp-vert-group >*:last-child >* {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+.zp-vert-group >*:not(:first-child) {
+  margin-top: -$button-border-width;
 }
