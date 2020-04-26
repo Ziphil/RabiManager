@@ -113,8 +113,8 @@ export class Root extends Component<Props, State> {
     return node;
   }
 
-  private renderChangeSave(): ReactNode {
-    let keys = Array.from(this.state.manager.saves.keys());
+  private renderChangeSaveGroup(): ReactNode {
+    let keys = Array.from(this.state.manager.saveGroups.keys());
     let currentKey = this.state.manager.currentKey;
     let popoverProps = {position: "auto-start", minimal: true} as const;
     let node = (
@@ -146,12 +146,12 @@ export class Root extends Component<Props, State> {
     return node;
   }
 
-  private renderViewSave(): ReactNode {
-    let save = this.state.manager.saves.get(this.state.nextKey ?? "");
+  private renderViewSaveGroup(): ReactNode {
+    let saveGroup = this.state.manager.saveGroups.get(this.state.nextKey ?? "");
     let buttonNodes = Array.from({length: 3}, (_, row) => {
       let rowButtonNodes = Array.from({length: 10}, (_, column) => {
         let number = row * 10 + column + 1;
-        let disabled = !save?.saves.get(number);
+        let disabled = !saveGroup?.saves.get(number);
         let rowButtonNode = <Button text={number} key={number} disabled={disabled} fill={true}/>;
         return rowButtonNode;
       });
@@ -180,9 +180,9 @@ export class Root extends Component<Props, State> {
       <div className="root">
         {this.renderNavbar()}
         <div>
-          {this.renderChangeSave()}
+          {this.renderChangeSaveGroup()}
           <Divider className="zp-divider"/>
-          {this.renderViewSave()}
+          {this.renderViewSaveGroup()}
         </div>
       </div>
     );

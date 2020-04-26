@@ -12,7 +12,7 @@ const DEFAULT_STEAM_DIRECTORY = "C:/Program Files (x86)/Steam/steamapps/common/R
 const DEFAULT_BACKUP_DIRECTORY = joinPath(process.env[(process.platform === "win32") ? "USERPROFILE" : "HOME"] ?? "", ".zajka");
 
 
-export class Save {
+export class SaveGroup {
 
   public key: string;
   public saves: Map<number, boolean>;
@@ -38,7 +38,7 @@ export class Save {
   }
 
   private async copy(targetPlace: "backup" | "steam", type: "save" | "image"): Promise<void> {
-    let sourcePlace = Save.oppositePlace(targetPlace);
+    let sourcePlace = SaveGroup.oppositePlace(targetPlace);
     let regexp = (type === "save") ? /save(\d+)\.sav$/ : /save(\d+)_a\.bmp$/;
     let sourceFiles = await fs.readdir(this.path(sourcePlace, type));
     let targetFiles = await fs.readdir(this.path(targetPlace, type));
@@ -69,15 +69,15 @@ export class Save {
     let path = "";
     if (place === "backup") {
       if (type === "save") {
-        path = Save.createPath([this.manager.backupDirectory, this.key], file);
+        path = SaveGroup.createPath([this.manager.backupDirectory, this.key], file);
       } else {
-        path = Save.createPath([this.manager.backupDirectory, this.key, "image"], file);
+        path = SaveGroup.createPath([this.manager.backupDirectory, this.key, "image"], file);
       }
     } else {
       if (type === "save") {
-        path = Save.createPath([this.manager.steamDirectory], file);
+        path = SaveGroup.createPath([this.manager.steamDirectory], file);
       } else {
-        path = Save.createPath([this.manager.steamDirectory, "image"], file);
+        path = SaveGroup.createPath([this.manager.steamDirectory, "image"], file);
       }
     }
     return path;
@@ -104,31 +104,31 @@ export class SaveManager {
   public currentKey: string | null;
   public steamDirectory: string;
   public backupDirectory: string;
-  public saves: Map<string, Save>;
+  public saveGroups: Map<string, SaveGroup>;
 
   public constructor() {
     this.currentKey = null;
     this.steamDirectory = DEFAULT_STEAM_DIRECTORY;
     this.backupDirectory = DEFAULT_BACKUP_DIRECTORY;
-    this.saves = new Map();
+    this.saveGroups = new Map();
   }
 
   public async load(): Promise<void> {
     await this.ensureBackupDirectory();
-    await Promise.all([this.loadSaves(), this.loadSetting()]);
+    await Promise.all([this.loadSaveGroups(), this.loadSetting()]);
   }
 
   private async ensureBackupDirectory(): Promise<void> {
     await fs.mkdir(this.backupDirectory, {recursive: true});
   }
 
-  private async loadSaves(): Promise<void> {
+  private async loadSaveGroups(): Promise<void> {
     let files = await fs.readdir(this.backupDirectory, {withFileTypes: true});
     let keys = files.filter((file) => file.isDirectory()).map((file) => file.name);
     for (let key of keys) {
-      let save = new Save(key, this);
-      await save.load();
-      this.saves.set(key, save);
+      let saveGroup = new SaveGroup(key, this);
+      await saveGroup.load();
+      this.saveGroups.set(key, saveGroup);
     }
   }
 
@@ -160,24 +160,24 @@ export class SaveManager {
   }
 
   public async backup(key: string): Promise<void> {
-    let save = this.saves.get(key);
-    if (save === undefined && key.match(/^[\w\d-]+$/)) {
-      save = new Save(key, this);
-      this.saves.set(key, save);
+    let saveGroup = this.saveGroups.get(key);
+    if (saveGroup === undefined && key.match(/^[\w\d-]+$/)) {
+      saveGroup = new SaveGroup(key, this);
+      this.saveGroups.set(key, saveGroup);
     }
-    if (save) {
+    if (saveGroup) {
       this.currentKey = key;
-      await save.backup();
-      await save.load();
+      await saveGroup.backup();
+      await saveGroup.load();
       await this.saveSetting();
     }
   }
 
   public async use(key: string): Promise<void> {
-    let save = this.saves.get(key);
-    if (save) {
+    let saveGroup = this.saveGroups.get(key);
+    if (saveGroup) {
       this.currentKey = key;
-      await save.use();
+      await saveGroup.use();
       await this.saveSetting();
     }
   }
