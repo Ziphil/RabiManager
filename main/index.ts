@@ -38,7 +38,7 @@ class Main {
   private createWindow(): void {
     let options = {autoHideMenuBar: true, acceptFirstMouse: true, useContentSize: true, webPreferences: {nodeIntegration: true}};
     this.window = new BrowserWindow({width: 450, height: 600, minWidth: 450, minHeight: 400, ...options});
-    this.window.loadFile("./index.html");
+    this.window.loadFile("./index.html", {query: {mode: "dashboard"}});
     this.window.on("closed", () => {
       this.window = null;
     });
