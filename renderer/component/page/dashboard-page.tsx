@@ -13,7 +13,8 @@ import {
   NavbarDivider,
   NavbarGroup,
   NavbarHeading,
-  Popover
+  Popover,
+  Toaster
 } from "@blueprintjs/core";
 import {
   IItemRendererProps,
@@ -87,6 +88,11 @@ export class DashboardPage extends Component<Props, State> {
     }
   }
 
+  private refreshManager(): void {
+    this.state.manager.load();
+    CustomToaster.show({message: "セーブグループのデータを更新しました。", intent: "success", icon: "tick"});
+  }
+
   private renderKeyItem(key: string, itemProps: IItemRendererProps): ReactElement {
     let node;
     let modifiers = itemProps.modifiers;
@@ -106,7 +112,7 @@ export class DashboardPage extends Component<Props, State> {
           </NavbarHeading>
           <NavbarDivider/>
           <Button text="設定" minimal={true} icon="cog"/>
-          <Button text="更新" minimal={true} icon="updated" onClick={() => this.state.manager.load()}/>
+          <Button text="更新" minimal={true} icon="updated" onClick={this.refreshManager.bind(this)}/>
           <Popover>
             <Button text="開く" minimal={true} icon="folder-shared-open"/>
             <Menu>
@@ -208,3 +214,4 @@ type State = {
 };
 
 let StringSelect = Select.ofType<string>();
+let CustomToaster = Toaster.create({className: "zp-toaster", position: "top", maxToasts: 3});
