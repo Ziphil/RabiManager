@@ -27,13 +27,19 @@ export class SaveParser {
     return result;
   }
 
-  public static itemLevels(): Converter<ItemLevels> {
-    let converter = function (buffer: Buffer, _: number): ItemLevels {
+  public static itemStatuses(): Converter<ItemStatuses> {
+    let converter = function (buffer: Buffer, _: number): ItemStatuses {
       let result = {} as any;
-      for (let [key, spec] of Object.entries(ITEM_LEVELS_DATA)) {
+      for (let [key, spec] of Object.entries(ITEM_STATUSES_DATA)) {
         let offset = spec.offset;
         let maxLevel = spec.maxLevel;
-        result[key] = SaveParser.level(maxLevel)(buffer, offset);
+        let rawLevel = SaveParser.int()(buffer, offset);
+        let level = Math.abs(rawLevel);
+        let equipped = rawLevel >= 0;
+        if (level < 0 || level > maxLevel) {
+          throw new Error(`weird save: 0x${offset.toString(16)}[4] -> 0x${rawLevel.toString(16)}`);
+        }
+        result[key] = {level, equipped};
       }
       return result;
     };
@@ -98,20 +104,6 @@ export class SaveParser {
     return converter;
   }
 
-  public static level<N extends number>(maxLevel: N): Converter<OrBelow<N> | -1> {
-    let converter = function (buffer: Buffer, offset: number): OrBelow<N> | -1 {
-      let code = buffer.readUInt32LE(offset);
-      if (code === 0xFFFFFFFF) {
-        code = -1;
-      }
-      if (code < -1 || code > maxLevel) {
-        throw new Error(`weird save: 0x${offset.toString(16)}[4] -> 0x${code.toString(16)}`);
-      }
-      return code as any;
-    };
-    return converter;
-  }
-
   public static count(size: number): Converter<number> {
     let converter = function (buffer: Buffer, offset: number): number {
       let count = 0;
@@ -139,7 +131,7 @@ export class SaveParser {
 
   public static int(): Converter<number> {
     let converter = function (buffer: Buffer, offset: number): number {
-      let code = buffer.readUInt32LE(offset);
+      let code = buffer.readInt32LE(offset);
       return code;
     };
     return converter;
@@ -175,43 +167,43 @@ const BADGE_STATUSES = [
   "unearned", "unequipped", "equipped"
 ] as const;
 
-const ITEM_LEVELS_DATA = {
+const ITEM_STATUSES_DATA = {
   pikoHammer: {offset: 0x7090, maxLevel: 3},
-  airJump: {offset: 0x7094, maxLevel: 1},
-  slidingPowder: {offset: 0x7098, maxLevel: 3},
   carrotBomb: {offset: 0x709C, maxLevel: 3},
-  sandglass: {offset: 0x70A0, maxLevel: 1},
-  speedBoost: {offset: 0x70A4, maxLevel: 3},
-  autoAttack: {offset: 0x70A8, maxLevel: 3},
-  ribbon: {offset: 0x70AC, maxLevel: 1},
-  soulHeart: {offset: 0x70B0, maxLevel: 1},
-  rabiSlipper: {offset: 0x70B4, maxLevel: 1},
-  bunnySpin: {offset: 0x70B8, maxLevel: 3},
-  quickHairpin: {offset: 0x70BC, maxLevel: 1},
-  fairyBook: {offset: 0x70C0, maxLevel: 1},
-  chaosRod: {offset: 0x70C4, maxLevel: 1},
-  hammerWave: {offset: 0x70C8, maxLevel: 3},
-  hammerRoll: {offset: 0x70CC, maxLevel: 3},
-  lightOrb: {offset: 0x70D0, maxLevel: 3},
-  waterOrb: {offset: 0x70D4, maxLevel: 3},
-  fireOrb: {offset: 0x70D8, maxLevel: 3},
-  natureOrb: {offset: 0x70DC, maxLevel: 3},
-  pHairpin: {offset: 0x70E0, maxLevel: 3},
-  sunnyBeam: {offset: 0x70E4, maxLevel: 1},
-  plusNecklace: {offset: 0x70E8, maxLevel: 3},
-  cyberFlower: {offset: 0x70EC, maxLevel: 1},
-  healingStaff: {offset: 0x70F0, maxLevel: 1},
-  maxBracelet: {offset: 0x70F4, maxLevel: 1},
-  explosionShot: {offset: 0x70F8, maxLevel: 1},
-  airDash: {offset: 0x70FC, maxLevel: 3},
-  bunnyStrike: {offset: 0x7100, maxLevel: 3},
-  strangeBox: {offset: 0x7104, maxLevel: 1},
-  wallJump: {offset: 0x7108, maxLevel: 3},
-  spikeBarrier: {offset: 0x710C, maxLevel: 3},
   bunnyAmulet: {offset: 0x7110, maxLevel: 4},
-  chargeRing: {offset: 0x7114, maxLevel: 3},
+  superCarrot: {offset: 0x711C, maxLevel: 3},
+  airJump: {offset: 0x7094, maxLevel: 1},
+  rabiSlippers: {offset: 0x70B4, maxLevel: 1},
+  slidingPowder: {offset: 0x7098, maxLevel: 3},
+  bunnyStrike: {offset: 0x7100, maxLevel: 3},
+  wallJump: {offset: 0x7108, maxLevel: 3},
+  airDash: {offset: 0x70FC, maxLevel: 3},
+  bunnyWhirl: {offset: 0x70B8, maxLevel: 3},
+  hammerRoll: {offset: 0x70CC, maxLevel: 3},
+  hammerWave: {offset: 0x70C8, maxLevel: 3},
+  speedBoost: {offset: 0x70A4, maxLevel: 3},
+  soulHeart: {offset: 0x70B0, maxLevel: 1},
+  spikeBarrier: {offset: 0x710C, maxLevel: 3},
+  hourglass: {offset: 0x70A0, maxLevel: 1},
+  strangeBox: {offset: 0x7104, maxLevel: 1},
+  fireOrb: {offset: 0x70D8, maxLevel: 3},
+  waterOrb: {offset: 0x70D4, maxLevel: 3},
+  natureOrb: {offset: 0x70DC, maxLevel: 3},
+  lightOrb: {offset: 0x70D0, maxLevel: 3},
+  ribbon: {offset: 0x70AC, maxLevel: 1},
+  sunnyBeam: {offset: 0x70E4, maxLevel: 1},
+  chaosRod: {offset: 0x70C4, maxLevel: 1},
+  healingStaff: {offset: 0x70F0, maxLevel: 1},
+  explodeShot: {offset: 0x70F8, maxLevel: 1},
   carrotShooter: {offset: 0x7118, maxLevel: 1},
-  superCarrot: {offset: 0x711C, maxLevel: 3}
+  quickBarrette: {offset: 0x70BC, maxLevel: 1},
+  maxBracelet: {offset: 0x70F4, maxLevel: 1},
+  chargeRing: {offset: 0x7114, maxLevel: 3},
+  plusNecklace: {offset: 0x70E8, maxLevel: 3},
+  autoEarrings: {offset: 0x70A8, maxLevel: 3},
+  carrotBook: {offset: 0x70C0, maxLevel: 1},
+  pHairpin: {offset: 0x70E0, maxLevel: 3},
+  cyberFlower: {offset: 0x70EC, maxLevel: 1}
 } as const;
 const CONSUMMABLE_COUNTS_DATA = {
   rumiDonut: {offset: 0x7120},
@@ -287,36 +279,36 @@ const BOSS_STATUSES_DATA = {
   ribbon: {offset: null, specialOffset: 0x9A94, code: 0x1A}
 } as const;
 const DATA = {
-  x: {offset: 0x7084, converter: SaveParser.int()},
-  y: {offset: 0x7088, converter: SaveParser.int()},
-  itemLevels: {offset: -1, converter: SaveParser.itemLevels()},
+  itemStatuses: {offset: -1, converter: SaveParser.itemStatuses()},
   consummableCounts: {offset: -1, converter: SaveParser.consummableCounts()},
   badgeStatuses: {offset: -1, converter: SaveParser.badgeStatuses()},
   strengthCounts: {offset: -1, converter: SaveParser.strengthCounts()},
-  hp: {offset: 0x80A0, converter: SaveParser.int()},
-  currentMapName: {offset: 0x80A4, converter: SaveParser.of(MAP_NAMES)},
-  playedTime: {offset: 0x80B8, converter: SaveParser.int()},
-  mp: {offset: 0x80C0, converter: SaveParser.double()},
-  takenDamage: {offset: 0x80C8, converter: SaveParser.int()},
-  difficulty: {offset: 0x8118, converter: SaveParser.of(DIFFICULTIES)},
-  runTime: {offset: 0x8280, converter: SaveParser.int()},
-  enAmount: {offset: 0x92AC, converter: SaveParser.int()},
   bossStatuses: {offset: 0x95C4, converter: SaveParser.bossStatuses()},
+  x: {offset: 0x7084, converter: SaveParser.int()},
+  y: {offset: 0x7088, converter: SaveParser.int()},
+  hp: {offset: 0x80A0, converter: SaveParser.int()},
+  mp: {offset: 0x80C0, converter: SaveParser.double()},
+  enAmount: {offset: 0x92AC, converter: SaveParser.int()},
   magicColor: {offset: 0x9948, converter: SaveParser.int()},
-  totalPlayTime: {offset: 0x9950, converter: SaveParser.int()},
-  totalRunTime: {offset: 0x9954, converter: SaveParser.int()},
+  takenDamage: {offset: 0x80C8, converter: SaveParser.int()},
   takenSpikeDamage: {offset: 0x9958, converter: SaveParser.int()},
-  currentChapter: {offset: 0x99A8, converter: SaveParser.int()},
   dealtDamage: {offset: 0x99AC, converter: SaveParser.int()},
   healedHp: {offset: 0x99B0, converter: SaveParser.int()},
-  speedrunMode: {offset: 0x9A2C, converter: SaveParser.of(SPEEDRUN_MODES)},
   itemPercent: {offset: 0x9B18, converter: SaveParser.int()},
   mapPercent: {offset: 0x9B1C, converter: SaveParser.int()},
-  loopCount: {offset: 0x10E3C, converter: SaveParser.int()},
-  gameMode: {offset: 0x11098, converter: SaveParser.of(GAME_MODES)}
+  mapName: {offset: 0x80A4, converter: SaveParser.of(MAP_NAMES)},
+  chapter: {offset: 0x99A8, converter: SaveParser.int()},
+  playTime: {offset: 0x80B8, converter: SaveParser.int()},
+  runTime: {offset: 0x8280, converter: SaveParser.int()},
+  totalPlayTime: {offset: 0x9950, converter: SaveParser.int()},
+  totalRunTime: {offset: 0x9954, converter: SaveParser.int()},
+  difficulty: {offset: 0x8118, converter: SaveParser.of(DIFFICULTIES)},
+  gameMode: {offset: 0x11098, converter: SaveParser.of(GAME_MODES)},
+  speedrunMode: {offset: 0x9A2C, converter: SaveParser.of(SPEEDRUN_MODES)},
+  loopCount: {offset: 0x10E3C, converter: SaveParser.int()}
 } as const;
 
-export type ItemLevels = {[K in keyof typeof ITEM_LEVELS_DATA]: OrBelow<(typeof ITEM_LEVELS_DATA)[K]["maxLevel"]> | -1};
+export type ItemStatuses = {[K in keyof typeof ITEM_STATUSES_DATA]: {level: OrBelow<(typeof ITEM_STATUSES_DATA)[K]["maxLevel"]>, equipped: boolean}};
 export type ConsummableCounts = {[K in keyof typeof CONSUMMABLE_COUNTS_DATA]: number};
 export type BadgeStatuses = {[K in keyof typeof BADGE_STATUSES_DATA]: (typeof BADGE_STATUSES)[number]};
 export type StrengthCounts = {[K in keyof typeof STRENGTH_COUNTS_DATA]: number};
