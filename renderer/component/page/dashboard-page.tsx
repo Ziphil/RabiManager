@@ -110,7 +110,8 @@ export class DashboardPage extends Component<Props, State> {
             <strong>Zajka</strong><br/>
             <small className="bp3-text-muted">Save Manager for “Rabi-Ribi”</small>
           </NavbarHeading>
-          <NavbarDivider/>
+        </NavbarGroup>
+        <NavbarGroup align="right">
           <Button text="設定" minimal={true} icon="cog"/>
           <Button text="更新" minimal={true} icon="updated" onClick={this.refreshManager.bind(this)}/>
           <Popover>
