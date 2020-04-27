@@ -212,10 +212,10 @@ const ITEM_LEVELS_DATA = {
   superCarrot: {offset: 0x711C, maxLevel: 3}
 } as const;
 const CONSUMMABLE_COUNTS_DATA = {
-  rumiDonutNumber: {offset: 0x7120},
-  rumiCakeNumber: {offset: 0x7124},
-  goldCarrotNumber: {offset: 0x7128},
-  cocoaBombNumber: {offset: 0x712C}
+  rumiDonut: {offset: 0x7120},
+  rumiCake: {offset: 0x7124},
+  goldCarrot: {offset: 0x7128},
+  cocoaBomb: {offset: 0x712C}
 } as const;
 const BADGE_STATUSES_DATA = {
   healthPlus: {offset: 0x718C},
