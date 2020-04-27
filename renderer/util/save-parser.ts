@@ -285,7 +285,7 @@ const BOSS_STATUSES_DATA = {
   erinoah: {offset: 0x8230, specialOffset: null, code: 0x1E},
   erina: {offset: null, specialOffset: null, code: 0x1F},
   ribbon: {offset: null, specialOffset: 0x9A94, code: 0x1A}
-};
+} as const;
 const DATA = {
   x: {offset: 0x7084, converter: SaveParser.int()},
   y: {offset: 0x7088, converter: SaveParser.int()},
