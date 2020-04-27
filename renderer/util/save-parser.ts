@@ -86,10 +86,12 @@ export class SaveParser {
       }
       for (let [key, spec] of Object.entries(BOSS_STATUSES_DATA)) {
         let bossOffset = spec.offset;
+        let bossSpecialOffset = spec.specialOffset;
         let bossCode = spec.code;
         let rank = (bossOffset !== null) ? SaveParser.of(RANKS)(buffer, bossOffset) : null;
+        let specialRank = (bossSpecialOffset !== null) ? SaveParser.of(RANKS)(buffer, bossSpecialOffset) : null;
         let order = (orderCodes.indexOf(bossCode) >= 0) ? orderCodes.indexOf(bossCode) : null;
-        result[key] = {rank, order};
+        result[key] = {rank, specialRank, order};
       }
       return result;
     };
@@ -259,30 +261,30 @@ const STRENGTH_COUNTS_DATA = {
   packUp: {offset: 0x760C}
 } as const;
 const BOSS_STATUSES_DATA = {
-  rumi: {offset: 0x81BC, code: 0x01},
-  rita: {offset: 0x81C0, code: 0x02},
-  nieve: {offset: 0x81C4, code: 0x03},
-  nixie: {offset: 0x81C8, code: 0x04},
-  aruraune: {offset: 0x81CC, code: 0x05},
-  pandora: {offset: 0x81D0, code: 0x06},
-  irisu: {offset: 0x81D4, code: 0x07},
-  saya: {offset: 0x81D8, code: 0x08},
-  cicini: {offset: 0x81DC, code: 0x09},
-  syaro: {offset: 0x81E0, code: 0x0A},
-  cocoa: {offset: 0x81E4, code: 0x0B},
-  ashuri: {offset: 0x81E8, code: 0x0C},
-  lilith: {offset: 0x81EC, code: 0x0D},
-  vanilla: {offset: 0x81F0, code: 0x0E},
-  chocolate: {offset: 0x81F4, code: 0x0F},
-  kotri: {offset: 0x81F8, code: 0x10},
-  kekeBunny: {offset: 0x81FC, code: 0x11},
-  seana: {offset: 0x8200, code: 0x12},
-  miriam: {offset: 0x8204, code: 0x13},
-  miru: {offset: 0x8208, code: 0x14},
-  noah: {offset: 0x820C, code: 0x15},
-  erinoah: {offset: 0x8230, code: 0x1E},
-  erina: {offset: null, code: 0x1F},
-  ribbon: {offset: null, code: 0x1A}
+  rumi: {offset: 0x81BC, specialOffset: null, code: 0x01},
+  rita: {offset: 0x81C0, specialOffset: null, code: 0x02},
+  nieve: {offset: 0x81C4, specialOffset: null, code: 0x03},
+  nixie: {offset: 0x81C8, specialOffset: null, code: 0x04},
+  aruraune: {offset: 0x81CC, specialOffset: null, code: 0x05},
+  pandora: {offset: 0x81D0, specialOffset: null, code: 0x06},
+  irisu: {offset: 0x81D4, specialOffset: null, code: 0x07},
+  saya: {offset: 0x81D8, specialOffset: null, code: 0x08},
+  cicini: {offset: 0x81DC, specialOffset: null, code: 0x09},
+  syaro: {offset: 0x81E0, specialOffset: null, code: 0x0A},
+  cocoa: {offset: 0x81E4, specialOffset: 0x9A58, code: 0x0B},
+  ashuri: {offset: 0x81E8, specialOffset: 0x9A5C, code: 0x0C},
+  lilith: {offset: 0x81EC, specialOffset: null, code: 0x0D},
+  vanilla: {offset: 0x81F0, specialOffset: null, code: 0x0E},
+  chocolate: {offset: 0x81F4, specialOffset: null, code: 0x0F},
+  kotri: {offset: 0x81F8, specialOffset: null, code: 0x10},
+  kekeBunny: {offset: 0x81FC, specialOffset: null, code: 0x11},
+  seana: {offset: 0x8200, specialOffset: null, code: 0x12},
+  miriam: {offset: 0x8204, specialOffset: null, code: 0x13},
+  miru: {offset: 0x8208, specialOffset: null, code: 0x14},
+  noah: {offset: 0x820C, specialOffset: null, code: 0x15},
+  erinoah: {offset: 0x8230, specialOffset: null, code: 0x1E},
+  erina: {offset: null, specialOffset: null, code: 0x1F},
+  ribbon: {offset: null, specialOffset: 0x9A94, code: 0x1A}
 };
 const DATA = {
   x: {offset: 0x7084, converter: SaveParser.int()},
@@ -297,8 +299,20 @@ const DATA = {
   mp: {offset: 0x80C0, converter: SaveParser.double()},
   takenDamage: {offset: 0x80C8, converter: SaveParser.int()},
   difficulty: {offset: 0x8118, converter: SaveParser.of(DIFFICULTIES)},
+  runTime: {offset: 0x8280, converter: SaveParser.int()},
+  enAmount: {offset: 0x92AC, converter: SaveParser.int()},
   bossStatuses: {offset: 0x95C4, converter: SaveParser.bossStatuses()},
+  magicColor: {offset: 0x9948, converter: SaveParser.int()},
+  totalPlayTime: {offset: 0x9950, converter: SaveParser.int()},
+  totalRunTime: {offset: 0x9954, converter: SaveParser.int()},
+  takenSpikeDamage: {offset: 0x9958, converter: SaveParser.int()},
+  currentChapter: {offset: 0x99A8, converter: SaveParser.int()},
+  dealtDamage: {offset: 0x99AC, converter: SaveParser.int()},
+  healedHp: {offset: 0x99B0, converter: SaveParser.int()},
   speedrunMode: {offset: 0x9A2C, converter: SaveParser.of(SPEEDRUN_MODES)},
+  itemPercent: {offset: 0x9B18, converter: SaveParser.int()},
+  mapPercent: {offset: 0x9B1C, converter: SaveParser.int()},
+  loopCount: {offset: 0x10E3C, converter: SaveParser.int()},
   gameMode: {offset: 0x11098, converter: SaveParser.of(GAME_MODES)}
 } as const;
 
@@ -306,7 +320,8 @@ export type ItemLevels = {[K in keyof typeof ITEM_LEVELS_DATA]: OrBelow<(typeof 
 export type ConsummableCounts = {[K in keyof typeof CONSUMMABLE_COUNTS_DATA]: number};
 export type BadgeStatuses = {[K in keyof typeof BADGE_STATUSES_DATA]: (typeof BADGE_STATUSES)[number]};
 export type StrengthCounts = {[K in keyof typeof STRENGTH_COUNTS_DATA]: number};
-export type BossStatuses = {[K in keyof typeof BOSS_STATUSES_DATA]: {rank: (typeof RANKS)[number] | null, order: number | null}};
+export type BossStatuses = {[K in keyof typeof BOSS_STATUSES_DATA]: {rank: BossStatusesHelper<K, "offset">, specialRank: BossStatusesHelper<K, "specialOffset">, order: number | null}};
 export type Save = {[K in keyof typeof DATA]: ReturnType<(typeof DATA)[K]["converter"]>};
 
+type BossStatusesHelper<K extends keyof typeof BOSS_STATUSES_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_STATUSES_DATA)[K][L] extends null ? null : (typeof RANKS)[number];
 type Converter<T> = (buffer: Buffer, offset: number) => T;
