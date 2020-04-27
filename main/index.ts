@@ -51,6 +51,12 @@ class Main {
       event.reply("get-props", this.props.get(id));
       this.props.delete(id);
     });
+    ipcMain.on("ready-show", (event, id) => {
+      let window = this.windows.get(id);
+      if (window !== undefined) {
+        window.show();
+      }
+    });
     ipcMain.on("resize", (event, id, width, height) => {
       let window = this.windows.get(id);
       if (window !== undefined) {
@@ -62,7 +68,8 @@ class Main {
   private createWindow(mode: string, parentId: string | null, props: object, options: BrowserWindowConstructorOptions): BrowserWindow {
     let commonOptions = {autoHideMenuBar: true, acceptFirstMouse: true, useContentSize: true, webPreferences: {nodeIntegration: true}};
     let parent = (parentId !== null) ? this.windows.get(parentId) : undefined;
-    let window = new BrowserWindow({parent, ...options, ...commonOptions});
+    let show = false;
+    let window = new BrowserWindow({parent, show, ...options, ...commonOptions});
     let id = window.id.toString();
     window.loadFile("./index.html", {query: {id, mode}});
     window.once("closed", () => {

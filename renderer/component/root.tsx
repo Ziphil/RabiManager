@@ -34,7 +34,9 @@ export class Root extends Component<Props, State> {
       this.setState({mode, id});
     }
     ipcRenderer.on("get-props", (event, props) => {
-      this.setState({props});
+      this.setState({props}, () => {
+        ipcRenderer.send("ready-show", id);
+      });
     });
     ipcRenderer.send("ready-get-props", id);
   }
