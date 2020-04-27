@@ -10,6 +10,7 @@ import {
   SaveManager
 } from "./save-manager";
 import {
+  Save,
   SaveParser
 } from "./save-parser";
 
@@ -19,7 +20,7 @@ export class SaveGroup {
   public key: string;
   public location: SaveLocation;
   private manager: SaveManager;
-  public saves: Map<number, true>;
+  public saves: Map<number, true | Save>;
 
   public constructor(key: string, location: SaveLocation, manager: SaveManager) {
     this.key = key;
@@ -34,14 +35,19 @@ export class SaveGroup {
       let exists = files.find((file) => file.name === `save${number}.sav`) !== undefined;
       if (exists) {
         this.saves.set(number, true);
+      } else {
+        this.saves.delete(number);
       }
     }
   }
 
   public async loadDetail(number: number): Promise<void> {
-    let parser = new SaveParser(this.location.get("backup", "save", `save${number}.sav`));
-    let result = await parser.parse();
-    console.log(result);
+    let currentSave = this.saves.get(number);
+    if (currentSave === true) {
+      let parser = new SaveParser(this.location.get("backup", "save", `save${number}.sav`));
+      let save = await parser.parse();
+      this.saves.set(number, save);
+    }
   }
 
   private async ensureBackupDirectories(): Promise<void> {

@@ -65,7 +65,7 @@ class Main {
     let window = new BrowserWindow({parent, ...options, ...commonOptions});
     let id = window.id.toString();
     window.loadFile("./index.html", {query: {id, mode}});
-    window.on("closed", () => {
+    window.once("closed", () => {
       this.windows.delete(id);
     });
     this.windows.set(id, window);

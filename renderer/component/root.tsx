@@ -42,7 +42,7 @@ export class Root extends Component<Props, State> {
       if (this.state.mode === "dashboard") {
         node = <DashboardPage id={this.state.id} {...this.state.props}/>;
       } else if (this.state.mode === "save") {
-        node = <div>Foo</div>;
+        node = <p>{this.state.props.toString()}</p>;
       }
     }
     return node;

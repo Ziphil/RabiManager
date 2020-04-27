@@ -30,6 +30,9 @@ import {
   ReactNode
 } from "react";
 import {
+  SaveGroup
+} from "../../util/save-group";
+import {
   SaveManager
 } from "../../util/save-manager";
 
@@ -74,6 +77,16 @@ export class DashboardPage extends Component<Props, State> {
       this.setState({processing: true});
       await this.state.manager.use(key);
       this.setState({processing: false, manager: this.state.manager});
+    }
+  }
+
+  private async openSave(saveGroup: SaveGroup | undefined, number: number): Promise<void> {
+    await saveGroup?.loadDetail(number);
+    let save = saveGroup?.saves.get(number);
+    if (save !== undefined && save !== true) {
+      let props = {save};
+      let options = {width: 300, height: 300, minWidth: 300, maxHeight: 300};
+      ipcRenderer.send("create-window", "save", this.props.id, props, options);
     }
   }
 
@@ -151,7 +164,7 @@ export class DashboardPage extends Component<Props, State> {
       let rowButtonNodes = Array.from({length: 10}, (_, column) => {
         let number = row * 10 + column + 1;
         let save = saveGroup?.saves.get(number);
-        let rowButtonNode = <Button text={number} key={number} disabled={save === undefined} fill={true} onClick={() => saveGroup?.loadDetail(number)}/>;
+        let rowButtonNode = <Button text={number} key={number} disabled={save === undefined} fill={true} onClick={() => this.openSave(saveGroup, number)}/>;
         return rowButtonNode;
       });
       let buttonNode = (
