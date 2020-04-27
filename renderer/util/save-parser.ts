@@ -164,7 +164,7 @@ const GAME_MODES = [
   "Standard", "Alternative", "Bunny Heaven", "Bunny Hell"
 ] as const;
 const BADGE_STATUSES = [
-  "unearned", "unequipped", "equipped"
+  {obtained: false, equipped: false}, {obtained: true, equipped: false}, {obtained: true, equipped: true}
 ] as const;
 
 const ITEM_STATUSES_DATA = {
