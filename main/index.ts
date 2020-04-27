@@ -12,6 +12,16 @@ import {
 } from "electron-connect";
 
 
+const COMMON_WINDOW_OPTIONS = {
+  resizable: true,
+  fullscreenable: false,
+  autoHideMenuBar: true,
+  acceptFirstMouse: true,
+  useContentSize: true,
+  webPreferences: {nodeIntegration: true}
+};
+
+
 class Main {
 
   private app: App;
@@ -66,10 +76,9 @@ class Main {
   }
 
   private createWindow(mode: string, parentId: string | null, props: object, options: BrowserWindowConstructorOptions): BrowserWindow {
-    let commonOptions = {autoHideMenuBar: true, acceptFirstMouse: true, useContentSize: true, webPreferences: {nodeIntegration: true}};
-    let parent = (parentId !== null) ? this.windows.get(parentId) : undefined;
     let show = false;
-    let window = new BrowserWindow({parent, show, ...options, ...commonOptions});
+    let parent = (parentId !== null) ? this.windows.get(parentId) : undefined;
+    let window = new BrowserWindow({...COMMON_WINDOW_OPTIONS, show, parent, ...options});
     let id = window.id.toString();
     window.loadFile("./index.html", {query: {id, mode}});
     window.once("closed", () => {
