@@ -93,6 +93,7 @@ export class DashboardPage extends Component<Props, State> {
 
   private refreshManager(): void {
     this.state.manager.load();
+    this.setState({manager: this.state.manager});
     CustomToaster.show({message: "セーブグループのデータを更新しました。", intent: "success", icon: "tick"});
   }
 
