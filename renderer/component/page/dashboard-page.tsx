@@ -10,7 +10,6 @@ import {
   Menu,
   MenuItem,
   Navbar,
-  NavbarDivider,
   NavbarGroup,
   NavbarHeading,
   Popover,
