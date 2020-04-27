@@ -20,12 +20,10 @@ import {
   Select
 } from "@blueprintjs/select";
 import {
-  ipcRenderer,
   shell
 } from "electron";
 import * as react from "react";
 import {
-  Component,
   ReactElement,
   ReactNode
 } from "react";
@@ -35,6 +33,9 @@ import {
 import {
   SaveManager
 } from "../../util/save-manager";
+import {
+  Component
+} from "../component";
 
 
 export class DashboardPage extends Component<Props, State> {
@@ -42,41 +43,37 @@ export class DashboardPage extends Component<Props, State> {
   public state: State = {
     manager: new SaveManager(),
     nextKey: null,
-    ready: false,
-    processing: false
+    ready: false
   };
 
   public async componentDidMount(): Promise<void> {
     await this.state.manager.load();
     let currentKey = this.state.manager.currentKey;
     this.setState({ready: true, nextKey: currentKey});
-    ipcRenderer.send("resize", this.props.id, document.body.clientWidth, document.body.clientHeight);
+    this.fitWindow();
   }
 
   private async changeKey(): Promise<void> {
     let key = this.state.nextKey;
     if (key !== null) {
-      this.setState({processing: true});
       await this.state.manager.change(key);
-      this.setState({processing: false, manager: this.state.manager});
+      this.setState({manager: this.state.manager});
     }
   }
 
   private async backupKey(): Promise<void> {
     let key = this.state.nextKey;
     if (key !== null) {
-      this.setState({processing: true});
       await this.state.manager.backup(key);
-      this.setState({processing: false, manager: this.state.manager});
+      this.setState({manager: this.state.manager});
     }
   }
 
   private async useKey(): Promise<void> {
     let key = this.state.nextKey;
     if (key !== null) {
-      this.setState({processing: true});
       await this.state.manager.use(key);
-      this.setState({processing: false, manager: this.state.manager});
+      this.setState({manager: this.state.manager});
     }
   }
 
@@ -86,7 +83,7 @@ export class DashboardPage extends Component<Props, State> {
     if (save !== undefined && save !== true) {
       let props = {save};
       let options = {width: 300, height: 300, minWidth: 300, maxHeight: 300};
-      ipcRenderer.send("create-window", "save", this.props.id, props, options);
+      this.createWindow("save", props, options);
     }
   }
 
@@ -205,13 +202,11 @@ export class DashboardPage extends Component<Props, State> {
 
 
 type Props = {
-  id: string
 };
 type State = {
   manager: SaveManager,
   nextKey: string | null,
-  ready: boolean,
-  processing: boolean
+  ready: boolean
 };
 
 let StringSelect = Select.ofType<string>();
