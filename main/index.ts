@@ -70,21 +70,22 @@ class Main {
     });
     this.windows.set(id, window);
     this.props.set(id, props);
-    this.connectReloadClient(window);
     return window;
   }
 
   private createMainWindow(): BrowserWindow {
     let options = {width: 450, height: 600, minWidth: 450, minHeight: 450};
     let window = this.createWindow("dashboard", null, {}, options);
+    this.connectReloadClient(window);
     return window;
   }
 
   private connectReloadClient(window: BrowserWindow): void {
     try {
       client.create(window);
+      console.log("Reload client connected");
     } catch (error) {
-      console.error("livereload client not found");
+      console.error("Reload client not found");
     }
   }
 

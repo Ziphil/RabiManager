@@ -5,6 +5,12 @@ import * as HtmlWebpackPlugin from "html-webpack-plugin";
 import * as path from "path";
 
 
+let electronReloadPlugin = electronReload({
+  path: path.join(__dirname, "dist", "index.js"),
+  stopOnClose: true,
+  logLevel: 0
+})();
+
 let main = {
   mode: "development",
   target: "electron-main",
@@ -30,7 +36,10 @@ let main = {
   },
   resolve: {
     extensions: [".ts", ".js"]
-  }
+  },
+  plugins: [
+    electronReloadPlugin
+  ]
 };
 
 let renderer = {
@@ -98,19 +107,12 @@ let renderer = {
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"]
   },
-  devServer: {
-    port: 3000,
-    historyApiFallback: true
-  },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./renderer/public/index.html",
       title: "Rajka"
     }),
-    electronReload({
-      path: path.join(__dirname, "dist", "index.js"),
-      logLevel: 0
-    })()
+    electronReloadPlugin
   ]
 };
 
