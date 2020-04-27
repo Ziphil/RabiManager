@@ -186,7 +186,7 @@ export class DashboardPage extends Component<Props, State> {
 
   public render(): ReactNode {
     let node = (
-      <div className="root">
+      <div className="zp-root zp-navbar-root">
         {this.renderNavbar()}
         <div>
           {this.renderChangeSaveGroup()}

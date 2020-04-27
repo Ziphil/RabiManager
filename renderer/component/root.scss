@@ -10,34 +10,29 @@ $pt-font-family-monospace: monospace;
 
 
 * {
-  user-select: none;
   outline: none !important;
 }
 
 body {
-  padding-top: $pt-navbar-height;
   overflow: hidden;
+  user-select: none;
 }
 
 .bp3-popover-target {
   width: 100%;
 }
 
-.root {
+.zp-root {
   padding: $pt-grid-size * 1.5;
   padding-top: $pt-grid-size * 2.5;
   padding-bottom: $pt-grid-size * 2.5;
 }
 
-.zp-title {
-  margin-bottom: $pt-grid-size * 1.5;
+.zp-navbar-root {
+  padding-top: $pt-navbar-height + $pt-grid-size * 2.5;
 }
 
-.zp-title >h2 {
-  margin: 0px;
-}
-
-h5.zp-heading {
+.zp-heading {
   margin-bottom: $pt-grid-size * 1.5;
 }
 
