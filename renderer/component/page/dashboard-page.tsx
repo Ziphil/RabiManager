@@ -87,6 +87,10 @@ export class DashboardPage extends Component<Props, State> {
     }
   }
 
+  private openSetting(): void {
+    CustomToaster.show({message: "未実装です。", intent: "warning", icon: "warning-sign"});
+  }
+
   private refreshManager(): void {
     this.state.manager.load();
     CustomToaster.show({message: "セーブグループのデータを更新しました。", intent: "success", icon: "tick"});
@@ -111,7 +115,7 @@ export class DashboardPage extends Component<Props, State> {
           </NavbarHeading>
         </NavbarGroup>
         <NavbarGroup align="right">
-          <Button text="設定" minimal={true} icon="cog"/>
+          <Button text="設定" minimal={true} icon="cog" onClick={this.openSetting.bind(this)}/>
           <Button text="更新" minimal={true} icon="updated" onClick={this.refreshManager.bind(this)}/>
           <Popover>
             <Button text="開く" minimal={true} icon="folder-shared-open"/>
