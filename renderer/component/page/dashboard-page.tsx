@@ -106,6 +106,7 @@ export class DashboardPage extends Component<Props, State> {
           </NavbarHeading>
           <NavbarDivider/>
           <Button text="設定" minimal={true} icon="cog"/>
+          <Button text="更新" minimal={true} icon="updated" onClick={() => this.state.manager.load()}/>
           <Popover>
             <Button text="開く" minimal={true} icon="folder-shared-open"/>
             <Menu>
@@ -113,9 +114,6 @@ export class DashboardPage extends Component<Props, State> {
               <MenuItem text="保存フォルダ" icon="folder-close" onClick={() => shell.openItem(this.state.manager.backupDirectory)}/>
             </Menu>
           </Popover>
-        </NavbarGroup>
-        <NavbarGroup align="right">
-          <small className="bp3-text-muted">© 2020 Ziphil</small>
         </NavbarGroup>
       </Navbar>
     );

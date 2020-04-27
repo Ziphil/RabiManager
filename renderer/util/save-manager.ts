@@ -33,6 +33,7 @@ export class SaveManager {
   }
 
   public async load(): Promise<void> {
+    this.saveGroups = new Map();
     await this.ensureBackupDirectory();
     await Promise.all([this.loadSaveGroups(), this.loadSetting()]);
   }

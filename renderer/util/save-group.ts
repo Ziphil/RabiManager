@@ -30,13 +30,12 @@ export class SaveGroup {
   }
 
   public async load(): Promise<void> {
+    this.saves = new Map();
     let files = await fs.readdir(this.location.get("backup", "save"), {withFileTypes: true});
     for (let number = 0 ; number <= 30 ; number ++) {
       let exists = files.find((file) => file.name === `save${number}.sav`) !== undefined;
       if (exists) {
         this.saves.set(number, true);
-      } else {
-        this.saves.delete(number);
       }
     }
   }
