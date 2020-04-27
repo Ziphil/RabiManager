@@ -19,6 +19,7 @@
     "@blueprintjs/core": "^3.26.0",
     "@blueprintjs/select": "^3.12.2",
     "electron-connect": "^0.6.3",
+    "query-string": "^6.12.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },

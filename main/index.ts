@@ -3,6 +3,7 @@
 import {
   App,
   BrowserWindow,
+  BrowserWindowConstructorOptions,
   app as electronApp,
   ipcMain
 } from "electron";
@@ -14,49 +15,77 @@ import {
 class Main {
 
   private app: App;
-  private window: BrowserWindow | null = null;
+  private windows: Map<string, BrowserWindow>;
+  private props: Map<string, object>;
 
   public constructor(app: App) {
     this.app = app;
-    this.setupIpc();
+    this.windows = new Map();
+    this.props = new Map();
   }
 
   public main(): void {
-    this.app.on("ready", this.onReady.bind(this));
-    this.app.on("activate", this.onActivated.bind(this));
-    this.app.on("window-all-closed", this.onWindowAllClosed.bind(this));
+    this.setupEventHandlers();
+    this.setupIpc();
+  }
+
+  private setupEventHandlers(): void {
+    this.app.on("ready", () => {
+      this.createMainWindow();
+    });
+    this.app.on("activate", () => {
+      if (this.windows.size <= 0) {
+        this.createMainWindow();
+      }
+    });
+    this.app.on("window-all-closed", () => {
+      this.app.quit();
+    });
   }
 
   private setupIpc(): void {
-    ipcMain.on("resize", (event, width, height) => {
-      if (this.window !== null) {
-        this.window.setContentSize(width, height);
+    ipcMain.on("create-window", (event, mode, parentId, props, options) => {
+      this.createWindow(mode, parentId, props, options);
+    });
+    ipcMain.on("ready-get-props", (event, id) => {
+      event.reply("get-props", this.props.get(id));
+      this.props.delete(id);
+    });
+    ipcMain.on("resize", (event, id, width, height) => {
+      let window = this.windows.get(id);
+      if (window !== undefined) {
+        window.setContentSize(width, height);
       }
     });
   }
 
-  private createWindow(): void {
-    let options = {autoHideMenuBar: true, acceptFirstMouse: true, useContentSize: true, webPreferences: {nodeIntegration: true}};
-    this.window = new BrowserWindow({width: 450, height: 600, minWidth: 450, minHeight: 400, ...options});
-    this.window.loadFile("./index.html", {query: {mode: "dashboard"}});
-    this.window.on("closed", () => {
-      this.window = null;
+  private createWindow(mode: string, parentId: string | null, props: object, options: BrowserWindowConstructorOptions): BrowserWindow {
+    let commonOptions = {autoHideMenuBar: true, acceptFirstMouse: true, useContentSize: true, webPreferences: {nodeIntegration: true}};
+    let parent = (parentId !== null) ? this.windows.get(parentId) : undefined;
+    let window = new BrowserWindow({parent, ...options, ...commonOptions});
+    let id = window.id.toString();
+    window.loadFile("./index.html", {query: {id, mode}});
+    window.on("closed", () => {
+      this.windows.delete(id);
     });
+    this.windows.set(id, window);
+    this.props.set(id, props);
+    this.connectReloadClient(window);
+    return window;
   }
 
-  private onReady(): void {
-    this.createWindow();
-    client.create(this.window);
+  private createMainWindow(): BrowserWindow {
+    let options = {width: 450, height: 600, minWidth: 450, minHeight: 450};
+    let window = this.createWindow("dashboard", null, {}, options);
+    return window;
   }
 
-  private onActivated(): void {
-    if (this.window === null) {
-      this.createWindow();
+  private connectReloadClient(window: BrowserWindow): void {
+    try {
+      client.create(window);
+    } catch (error) {
+      console.error("livereload client not found");
     }
-  }
-
-  private onWindowAllClosed(): void {
-    this.app.quit();
   }
 
 }

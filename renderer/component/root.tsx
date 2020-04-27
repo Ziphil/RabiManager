@@ -1,5 +1,9 @@
 //
 
+import {
+  ipcRenderer
+} from "electron";
+import * as queryParser from "query-string";
 import * as react from "react";
 import {
   Component,
@@ -11,16 +15,33 @@ import {
 import "./root.scss";
 
 
-export class Root extends Component<{}, {}> {
+export class Root extends Component<Props, State> {
+
+  public state: State = {
+    mode: "",
+    id: "",
+    props: null
+  };
+
+  public async componentDidMount(): Promise<void> {
+    let query = queryParser.parse(window.location.search);
+    let mode = query.mode;
+    let id = query.id;
+    if (typeof mode === "string" && typeof id === "string") {
+      this.setState({mode, id});
+    }
+    ipcRenderer.on("get-props", (event, props) => {
+      this.setState({props});
+    });
+    ipcRenderer.send("ready-get-props", id);
+  }
 
   public render(): ReactNode {
-    let node;
-    let match = window.location.search.match(/\?mode=(\w+)/);
-    if (match) {
-      let mode = match[1];
-      if (mode === "dashboard") {
-        node = <DashboardPage/>;
-      } else if (mode === "save") {
+    let node = <div/>;
+    if (this.state.props !== null) {
+      if (this.state.mode === "dashboard") {
+        node = <DashboardPage id={this.state.id} {...this.state.props}/>;
+      } else if (this.state.mode === "save") {
         node = <div>Foo</div>;
       }
     }
@@ -28,3 +49,12 @@ export class Root extends Component<{}, {}> {
   }
 
 }
+
+
+type Props = {
+};
+type State = {
+  mode: string,
+  id: string,
+  props: object | null
+};

@@ -47,7 +47,7 @@ export class DashboardPage extends Component<Props, State> {
     await this.state.manager.load();
     let currentKey = this.state.manager.currentKey;
     this.setState({ready: true, nextKey: currentKey});
-    ipcRenderer.send("resize", document.body.clientWidth, document.body.clientHeight);
+    ipcRenderer.send("resize", this.props.id, document.body.clientWidth, document.body.clientHeight);
   }
 
   private async changeKey(): Promise<void> {
@@ -192,6 +192,7 @@ export class DashboardPage extends Component<Props, State> {
 
 
 type Props = {
+  id: string
 };
 type State = {
   manager: SaveManager,
