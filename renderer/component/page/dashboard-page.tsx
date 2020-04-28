@@ -82,7 +82,7 @@ export class DashboardPage extends Component<Props, State> {
     let save = saveGroup?.saves.get(number);
     if (save !== undefined && save !== true) {
       let props = {save};
-      let options = {width: 500, height: 500, minWidth: 500, minHeight: 500};
+      let options = {width: 700, height: 700, minWidth: 700, minHeight: 700};
       this.createWindow("save", props, options);
     }
   }
@@ -149,10 +149,10 @@ export class DashboardPage extends Component<Props, State> {
             </ControlGroup>
           </StringSelect>
         </FormGroup>
-        <ButtonGroup className="zp-right-margin">
+        <ButtonGroup className="zp-right-margin-button">
           <Button text="変更" intent="primary" icon="refresh" onClick={this.changeKey.bind(this)}/>
         </ButtonGroup>
-        <ButtonGroup className="zp-right-margin">
+        <ButtonGroup className="zp-right-margin-button">
           <Button text="コピー" icon="circle-arrow-right" onClick={this.backupKey.bind(this)}/>
           <Button text="反映" icon="circle-arrow-left" onClick={this.useKey.bind(this)}/>
         </ButtonGroup>

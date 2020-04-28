@@ -13,3 +13,9 @@ export type Length<A> = A extends {length: infer N} ? N : never;
 export type OrBelow<N extends number> = Length<OrBelowTuple<N>>;
 type OrBelowTuple<N extends number> = OrBelowTupleRec<N, [], []>;
 type OrBelowTupleRec<N, R, S extends Array<any>> = {0: R, 1: OrBelowTupleRec<N, R | Append<any, S>, Append<any, S>>}[S extends {length: N} ? 0 : 1];
+
+// 与えられたオブジェクトのキーの配列を返します。
+// JavaScript 標準の Object.keys よりも返り値の型が正確になっています。
+export function genericKeys<T extends object>(object: T): Array<keyof T> {
+  return Object.keys(object) as any;
+}

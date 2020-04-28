@@ -148,70 +148,89 @@ export class SaveParser {
 }
 
 
-const DIFFICULTIES = [
+export const DIFFICULTIES = [
   "Casual", "Novice", "Normal", "Hard", "Hell", "Bunny Extinction"
 ] as const;
-const MAP_NAMES = [
+export const MAP_NAMES = [
   "Southern Woodland", "Weastern Coast", "Island Core", "Northern Tundra", "Eastern Highlands", "Rabi Rabi Town", "Plurkwood", "Subterranean Area", "Warp Destination", "System Interior"
 ] as const;
-const RANKS = [
+export const RANKS = [
   "E", "D", "C", "B", "A", "S", "SS", "SSS", "MAX"
 ] as const;
-const SPEEDRUN_MODES = [
+export const SPEEDRUN_MODES = [
   "Story", "Speedrun"
 ] as const;
-const GAME_MODES = [
+export const GAME_MODES = [
   "Standard", "Alternative", "Bunny Heaven", "Bunny Hell"
 ] as const;
-const BADGE_STATUSES = [
+export const BADGE_STATUSES = [
   {obtained: false, equipped: false}, {obtained: true, equipped: false}, {obtained: true, equipped: true}
 ] as const;
 
-const ITEM_STATUSES_DATA = {
-  pikoHammer: {offset: 0x7090, maxLevel: 3},
-  carrotBomb: {offset: 0x709C, maxLevel: 3},
-  bunnyAmulet: {offset: 0x7110, maxLevel: 4},
-  superCarrot: {offset: 0x711C, maxLevel: 3},
-  airJump: {offset: 0x7094, maxLevel: 1},
-  rabiSlippers: {offset: 0x70B4, maxLevel: 1},
-  slidingPowder: {offset: 0x7098, maxLevel: 3},
-  bunnyStrike: {offset: 0x7100, maxLevel: 3},
-  wallJump: {offset: 0x7108, maxLevel: 3},
-  airDash: {offset: 0x70FC, maxLevel: 3},
-  bunnyWhirl: {offset: 0x70B8, maxLevel: 3},
-  hammerRoll: {offset: 0x70CC, maxLevel: 3},
-  hammerWave: {offset: 0x70C8, maxLevel: 3},
-  speedBoost: {offset: 0x70A4, maxLevel: 3},
-  soulHeart: {offset: 0x70B0, maxLevel: 1},
-  spikeBarrier: {offset: 0x710C, maxLevel: 3},
-  hourglass: {offset: 0x70A0, maxLevel: 1},
-  strangeBox: {offset: 0x7104, maxLevel: 1},
-  fireOrb: {offset: 0x70D8, maxLevel: 3},
-  waterOrb: {offset: 0x70D4, maxLevel: 3},
-  natureOrb: {offset: 0x70DC, maxLevel: 3},
-  lightOrb: {offset: 0x70D0, maxLevel: 3},
-  ribbon: {offset: 0x70AC, maxLevel: 1},
-  sunnyBeam: {offset: 0x70E4, maxLevel: 1},
-  chaosRod: {offset: 0x70C4, maxLevel: 1},
-  healingStaff: {offset: 0x70F0, maxLevel: 1},
-  explodeShot: {offset: 0x70F8, maxLevel: 1},
-  carrotShooter: {offset: 0x7118, maxLevel: 1},
-  quickBarrette: {offset: 0x70BC, maxLevel: 1},
-  maxBracelet: {offset: 0x70F4, maxLevel: 1},
-  chargeRing: {offset: 0x7114, maxLevel: 3},
-  plusNecklace: {offset: 0x70E8, maxLevel: 3},
-  autoEarrings: {offset: 0x70A8, maxLevel: 3},
-  carrotBook: {offset: 0x70C0, maxLevel: 1},
-  pHairpin: {offset: 0x70E0, maxLevel: 3},
-  cyberFlower: {offset: 0x70EC, maxLevel: 1}
+export const ATTACK_ITEM_KEYS = [
+  "pikoHammer", "carrotBomb", "bunnyAmulet", "superCarrot"
+] as const;
+export const SKILL_ITEM_KEYS = [
+  "airJump", "rabiSlippers", "slidingPowder", "bunnyStrike", "wallJump", "airDash", "bunnyWhirl", "hammerRoll", "hammerWave", "speedBoost", "soulHeart", "spikeBarrier"
+] as const;
+export const ORB_ITEM_KEYS = [
+  "fireOrb", "waterOrb", "natureOrb", "lightOrb"
+] as const;
+export const OTHER_ITEM_KEYS = [
+  "hourglass", "strangeBox"
+] as const;
+export const MAGIC_ITEM_KEYS = [
+  "ribbon", "sunnyBeam", "chaosRod", "healingStaff", "explodeShot", "carrotShooter"
+] as const;
+export const RIBBON_SKILL_ITEM_KEYS = [
+  "quickBarrette", "maxBracelet", "chargeRing", "plusNecklace", "autoEarrings", "carrotBook", "pHairpin", "cyberFlower"
+] as const;
+
+export const ITEM_STATUSES_DATA = {
+  pikoHammer: {offset: 0x7090, maxLevel: 3, name: "ピコハンマー"},
+  carrotBomb: {offset: 0x709C, maxLevel: 3, name: "キャロットボム"},
+  bunnyAmulet: {offset: 0x7110, maxLevel: 4, name: "バニーのお守り"},
+  superCarrot: {offset: 0x711C, maxLevel: 3, name: "スーパーキャロット"},
+  airJump: {offset: 0x7094, maxLevel: 1, name: "エアジャンプ"},
+  rabiSlippers: {offset: 0x70B4, maxLevel: 1, name: "ラビスリッパー"},
+  slidingPowder: {offset: 0x7098, maxLevel: 3, name: "スライディングパウダー"},
+  bunnyStrike: {offset: 0x7100, maxLevel: 3, name: "バニーストライク"},
+  wallJump: {offset: 0x7108, maxLevel: 3, name: "壁ジャンプ"},
+  airDash: {offset: 0x70FC, maxLevel: 3, name: "エアダッシュ"},
+  bunnyWhirl: {offset: 0x70B8, maxLevel: 3, name: "バニースピン"},
+  hammerRoll: {offset: 0x70CC, maxLevel: 3, name: "ハンマーローリング"},
+  hammerWave: {offset: 0x70C8, maxLevel: 3, name: "ハンマーウェーブ"},
+  speedBoost: {offset: 0x70A4, maxLevel: 3, name: "スピードブースト"},
+  soulHeart: {offset: 0x70B0, maxLevel: 1, name: "ソウルハート"},
+  spikeBarrier: {offset: 0x710C, maxLevel: 3, name: "スパイクバリア"},
+  hourglass: {offset: 0x70A0, maxLevel: 1, name: "砂時計"},
+  strangeBox: {offset: 0x7104, maxLevel: 1, name: "変な箱"},
+  fireOrb: {offset: 0x70D8, maxLevel: 3, name: "ファイヤーオーブ"},
+  waterOrb: {offset: 0x70D4, maxLevel: 3, name: "ウォーターオーブ"},
+  natureOrb: {offset: 0x70DC, maxLevel: 3, name: "ネイチャーオーブ"},
+  lightOrb: {offset: 0x70D0, maxLevel: 3, name: "ライトオーブ"},
+  ribbon: {offset: 0x70AC, maxLevel: 1, name: "リボン"},
+  sunnyBeam: {offset: 0x70E4, maxLevel: 1, name: "サニービーム"},
+  chaosRod: {offset: 0x70C4, maxLevel: 1, name: "ケイオスロッド"},
+  healingStaff: {offset: 0x70F0, maxLevel: 1, name: "ヒーリングスタッフ"},
+  explodeShot: {offset: 0x70F8, maxLevel: 1, name: "エクスプロージョンショット"},
+  carrotShooter: {offset: 0x7118, maxLevel: 1, name: "キャロットシューター"},
+  quickBarrette: {offset: 0x70BC, maxLevel: 1, name: "クイックヘアクリップ"},
+  maxBracelet: {offset: 0x70F4, maxLevel: 1, name: "マックスブレスレット"},
+  chargeRing: {offset: 0x7114, maxLevel: 3, name: "チャージリング"},
+  plusNecklace: {offset: 0x70E8, maxLevel: 3, name: "プラスネックレス"},
+  autoEarrings: {offset: 0x70A8, maxLevel: 3, name: "オートイヤリング"},
+  carrotBook: {offset: 0x70C0, maxLevel: 1, name: "妖精の本"},
+  pHairpin: {offset: 0x70E0, maxLevel: 3, name: "Pヘアピン"},
+  cyberFlower: {offset: 0x70EC, maxLevel: 1, name: "サイバーフラワー"}
 } as const;
-const CONSUMMABLE_COUNTS_DATA = {
-  rumiDonut: {offset: 0x7120},
-  rumiCake: {offset: 0x7124},
-  goldCarrot: {offset: 0x7128},
-  cocoaBomb: {offset: 0x712C}
+export const CONSUMMABLE_COUNTS_DATA = {
+  rumiDonut: {offset: 0x7120, name: "ルミのドーナツ"},
+  rumiCake: {offset: 0x7124, name: "ルミのケーキ"},
+  goldCarrot: {offset: 0x7128, name: "ゴールドキャロット"},
+  cocoaBomb: {offset: 0x712C, name: "ココアボム"}
 } as const;
-const BADGE_STATUSES_DATA = {
+export const BADGE_STATUSES_DATA = {
   healthPlus: {offset: 0x718C},
   healthSurge: {offset: 0x7190},
   manaPlus: {offset: 0x7194},
@@ -245,14 +264,14 @@ const BADGE_STATUSES_DATA = {
   autoTrigger: {offset: 0x7204},
   lilithGift: {offset: 0x7208}
 } as const;
-const STRENGTH_COUNTS_DATA = {
-  healthUp: {offset: 0x720C},
-  attackUp: {offset: 0x730C},
-  manaUp: {offset: 0x740C},
-  regenUp: {offset: 0x750C},
-  packUp: {offset: 0x760C}
+export const STRENGTH_COUNTS_DATA = {
+  healthUp: {offset: 0x720C, name: "ヘルスアップ"},
+  manaUp: {offset: 0x740C, name: "マナアップ"},
+  regenUp: {offset: 0x750C, name: "リジェネアップ"},
+  attackUp: {offset: 0x730C, name: "アタックアップ"},
+  packUp: {offset: 0x760C, name: "バッジアップ"}
 } as const;
-const BOSS_STATUSES_DATA = {
+export const BOSS_STATUSES_DATA = {
   rumi: {offset: 0x81BC, specialOffset: null, code: 0x01},
   rita: {offset: 0x81C0, specialOffset: null, code: 0x02},
   nieve: {offset: 0x81C4, specialOffset: null, code: 0x03},
@@ -278,7 +297,7 @@ const BOSS_STATUSES_DATA = {
   erina: {offset: null, specialOffset: null, code: 0x1F},
   ribbon: {offset: null, specialOffset: 0x9A94, code: 0x1A}
 } as const;
-const DATA = {
+export const DATA = {
   itemStatuses: {offset: -1, converter: SaveParser.itemStatuses()},
   consummableCounts: {offset: -1, converter: SaveParser.consummableCounts()},
   badgeStatuses: {offset: -1, converter: SaveParser.badgeStatuses()},
