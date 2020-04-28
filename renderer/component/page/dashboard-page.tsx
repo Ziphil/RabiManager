@@ -91,8 +91,8 @@ export class DashboardPage extends Component<Props, State> {
     CustomToaster.show({message: "未実装です。", intent: "warning", icon: "warning-sign"});
   }
 
-  private refreshManager(): void {
-    this.state.manager.load();
+  private async refreshManager(): Promise<void> {
+    await this.state.manager.load();
     this.setState({manager: this.state.manager});
     CustomToaster.show({message: "セーブグループのデータを更新しました。", intent: "success", icon: "tick"});
   }
