@@ -14,17 +14,7 @@ let electronReloadPlugin = electronReload({
 
 let main = merge(common[0], {
   mode: "development",
-  module: {
-    rules: [
-      {
-        test: /.tsx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "ts-loader"
-        }
-      }
-    ]
-  },
+  devtool: "source-map",
   plugins: [
     electronReloadPlugin
   ]
