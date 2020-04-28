@@ -2,6 +2,7 @@
 
 import {
   Divider,
+  ProgressBar,
   Tag
 } from "@blueprintjs/core";
 import * as react from "react";
@@ -10,6 +11,10 @@ import {
 } from "react";
 import {
   ATTACK_ITEM_KEYS,
+  BADGE_STATUSES_DATA,
+  BOSS_STATUSES_DATA,
+  BadgeStatuses,
+  BossStatuses,
   CONSUMMABLE_COUNTS_DATA,
   ConsummableCounts,
   ExtendedSave,
@@ -97,23 +102,24 @@ export class SavePage extends Component<Props, State> {
     return node;
   }
 
-  private renderItems(): ReactNode {
+  private renderItemStatuses(): ReactNode {
     let save = this.state.save;
     let createItemNodes = function (keys: Readonly<Array<keyof ItemStatuses>>): ReactNode {
       let itemNodes = keys.map((key) => {
         let data = ITEM_STATUSES_DATA[key];
         let status = save.itemStatuses[key];
+        let nameClassName = (status.level > 0 && !status.equipped) ? "zp-striked" : "";
         let equipNode;
         let levelNode;
         if (status.level > 0 && status.equipped) {
           equipNode = <Tag className="zp-small-tag zp-left-margin-tag" minimal={true} round={true}>E</Tag>;
         }
-        if (data.maxLevel > 1 && status.level > 0 && status.equipped) {
+        if (data.maxLevel > 1 && status.level > 0) {
           levelNode = <Tag className="zp-small-tag zp-left-margin-tag" round={true}>Lv.{status.level}</Tag>;
         }
         let itemNode = (
           <div className="zp-item" key={key}>
-            {(status.level > 0) ? data.name : "—"}
+            <span className={nameClassName}>{(status.level > 0) ? data.name : "—"}</span>
             {levelNode}
             {equipNode}
           </div>
@@ -190,12 +196,98 @@ export class SavePage extends Component<Props, State> {
     return node;
   }
 
+  private renderBadgeStatuses(): ReactNode {
+    let save = this.state.save;
+    let createBadgeNodes = function (keys: Readonly<Array<keyof BadgeStatuses>>): ReactNode {
+      let badgeNodes = keys.map((key) => {
+        let data = BADGE_STATUSES_DATA[key];
+        let status = save.badgeStatuses[key];
+        let nameClassName = (status.obtained && !status.equipped) ? "zp-striked" : "";
+        let equipNode;
+        if (status.equipped) {
+          equipNode = <Tag className="zp-small-tag zp-left-margin-tag" minimal={true} round={true}>E</Tag>;
+        }
+        let badgeNode = (
+          <div className="zp-item" key={key}>
+            <span className={nameClassName}>{(status.obtained) ? data.name : "—"}</span>
+            {equipNode}
+          </div>
+        );
+        return badgeNode;
+      });
+      return badgeNodes;
+    };
+    let node = (
+      <div>
+        <h4 className="bp3-heading">バッジ</h4>
+        <div className="zp-horizontal">
+          <div className="zp-horizontal-row">
+            {createBadgeNodes(genericKeys(BADGE_STATUSES_DATA).slice(0, 10))}
+          </div>
+          <div className="zp-horizontal-row">
+            {createBadgeNodes(genericKeys(BADGE_STATUSES_DATA).slice(10, 21))}
+          </div>
+          <div className="zp-horizontal-row">
+            {createBadgeNodes(genericKeys(BADGE_STATUSES_DATA).slice(21, 32))}
+          </div>
+        </div>
+      </div>
+    );
+    return node;
+  }
+
+  private renderBossStatuses(): ReactNode {
+    let save = this.state.save;
+    let createBossNodes = function (keys: Readonly<Array<keyof BossStatuses>>): ReactNode {
+      let bossNodes = keys.map((key) => {
+        let data = BOSS_STATUSES_DATA[key];
+        let status = save.bossStatuses[key];
+        let rankRatio = (status.order !== null && status.rank !== null) ? (status.rankNumber + 1) / 9 : 0;
+        let bossNode = (
+          <div className="zp-value-wrapper" key={key}>
+            <div className="zp-name">{data.name}</div>
+            <div className="zp-value">
+              <ProgressBar value={rankRatio} stripes={false}/>
+              <div className="zp-rank-wrapper">
+                <div className="zp-rank">{(status.order !== null && status.rank !== null) ? status.rank : "—"}</div>
+                <div className="zp-order">{(status.order !== null) ? "#" + (status.order + 1) : ""}</div>
+              </div>
+            </div>
+          </div>
+        );
+        return bossNode;
+      });
+      return bossNodes;
+    };
+    let node = (
+      <div>
+        <h4 className="bp3-heading">タウンメンバー</h4>
+        <div className="zp-horizontal">
+          <div className="zp-horizontal-row">
+            {createBossNodes(genericKeys(BOSS_STATUSES_DATA).slice(0, 8))}
+          </div>
+          <div className="zp-horizontal-row">
+            {createBossNodes(genericKeys(BOSS_STATUSES_DATA).slice(8, 16))}
+          </div>
+          <div className="zp-horizontal-row">
+            {createBossNodes(genericKeys(BOSS_STATUSES_DATA).slice(16, 24))}
+          </div>
+        </div>
+      </div>
+    );
+    return node;
+  }
+
   public render(): ReactNode {
     let node = (
       <div className="zp-root">
         {this.renderBasicInformation()}
         <Divider className="zp-divider"/>
-        {this.renderItems()}
+        {this.renderItemStatuses()}
+        <Divider className="zp-divider"/>
+        {this.renderBadgeStatuses()}
+        <Divider className="zp-divider"/>
+        {this.renderBossStatuses()}
       </div>
     );
     return node;

@@ -95,9 +95,11 @@ export class SaveParser {
         let bossSpecialOffset = spec.specialOffset;
         let bossCode = spec.code;
         let rank = (bossOffset !== null) ? SaveParser.of(RANKS)(buffer, bossOffset) : null;
+        let rankNumber = (bossOffset !== null) ? SaveParser.int()(buffer, bossOffset) : null;
         let specialRank = (bossSpecialOffset !== null) ? SaveParser.of(RANKS)(buffer, bossSpecialOffset) : null;
+        let specialRankNumber = (bossSpecialOffset !== null) ? SaveParser.int()(buffer, bossSpecialOffset) : null;
         let order = (orderCodes.indexOf(bossCode) >= 0) ? orderCodes.indexOf(bossCode) : null;
-        result[key] = {rank, specialRank, order};
+        result[key] = {rank, rankNumber, specialRank, specialRankNumber, order};
       }
       return result;
     };
@@ -231,38 +233,38 @@ export const CONSUMMABLE_COUNTS_DATA = {
   cocoaBomb: {offset: 0x712C, name: "ココアボム"}
 } as const;
 export const BADGE_STATUSES_DATA = {
-  healthPlus: {offset: 0x718C},
-  healthSurge: {offset: 0x7190},
-  manaPlus: {offset: 0x7194},
-  manaSurge: {offset: 0x7198},
-  crisisBoost: {offset: 0x719C},
-  attackGrow: {offset: 0x71A0},
-  defenceGrow: {offset: 0x71A4},
-  attackTrade: {offset: 0x71A8},
-  defenceTrade: {offset: 0x71AC},
-  armStrength: {offset: 0x71B0},
-  carrotBoost: {offset: 0x71B4},
-  weaken: {offset: 0x71B8},
-  selfDefense: {offset: 0x71BC},
-  armored: {offset: 0x71C0},
-  luckySeven: {offset: 0x71C4},
-  hexCancel: {offset: 0x71C8},
-  pureLove: {offset: 0x71CC},
-  toxicStrike: {offset: 0x71D0},
-  frameCancel: {offset: 0x71D4},
-  healthWager: {offset: 0x71D8},
-  manaWager: {offset: 0x71DC},
-  staminaPlus: {offset: 0x71E0},
-  blessed: {offset: 0x71E4},
-  hitboxDown: {offset: 0x71E8},
-  cashback: {offset: 0x71EC},
-  survival: {offset: 0x71F0},
-  topForm: {offset: 0x71F4},
-  toughSkin: {offset: 0x71F8},
-  erinaBadge: {offset: 0x71FC},
-  ribbonBadge: {offset: 0x7200},
-  autoTrigger: {offset: 0x7204},
-  lilithGift: {offset: 0x7208}
+  healthPlus: {offset: 0x718C, name: "ヘルスプラス"},
+  healthSurge: {offset: 0x7190, name: "ヘルスサージ"},
+  manaPlus: {offset: 0x7194, name: "マナプラス"},
+  manaSurge: {offset: 0x7198, name: "マナサージ"},
+  crisisBoost: {offset: 0x719C, name: "クライシスブースト"},
+  attackGrow: {offset: 0x71A0, name: "攻撃強化"},
+  defenceGrow: {offset: 0x71A4, name: "防御強化"},
+  attackTrade: {offset: 0x71A8, name: "Oコンバート"},
+  defenceTrade: {offset: 0x71AC, name: "Dコンバート"},
+  armStrength: {offset: 0x71B0, name: "ハンマーブースト"},
+  carrotBoost: {offset: 0x71B4, name: "キャロットブースト"},
+  weaken: {offset: 0x71B8, name: "ピアス"},
+  selfDefense: {offset: 0x71BC, name: "アンチピアス"},
+  armored: {offset: 0x71C0, name: "スーパーアーマー"},
+  luckySeven: {offset: 0x71C4, name: "ラッキーセブン"},
+  hexCancel: {offset: 0x71C8, name: "ヘックスキャンセル"},
+  pureLove: {offset: 0x71CC, name: "ユリバッジ"},
+  toxicStrike: {offset: 0x71D0, name: "ポイズンヒット"},
+  frameCancel: {offset: 0x71D4, name: "レバーキャンセル"},
+  healthWager: {offset: 0x71D8, name: "ヘルスコンバート"},
+  manaWager: {offset: 0x71DC, name: "マナコンバート"},
+  staminaPlus: {offset: 0x71E0, name: "スタミナプラス"},
+  blessed: {offset: 0x71E4, name: "お守り強化"},
+  hitboxDown: {offset: 0x71E8, name: "ヒットボックスダウン"},
+  cashback: {offset: 0x71EC, name: "ENアップ"},
+  survival: {offset: 0x71F0, name: "根性"},
+  topForm: {offset: 0x71F4, name: "イミュニティR"},
+  toughSkin: {offset: 0x71F8, name: "イミュニティG"},
+  erinaBadge: {offset: 0x71FC, name: "エリナバッジ"},
+  ribbonBadge: {offset: 0x7200, name: "リボンバッジ"},
+  autoTrigger: {offset: 0x7204, name: "オートボム"},
+  lilithGift: {offset: 0x7208, name: "リリスのプレゼント"}
 } as const;
 export const STRENGTH_COUNTS_DATA = {
   healthUp: {offset: 0x720C, name: "ヘルスアップ"},
@@ -272,30 +274,30 @@ export const STRENGTH_COUNTS_DATA = {
   packUp: {offset: 0x760C, name: "バッジアップ"}
 } as const;
 export const BOSS_STATUSES_DATA = {
-  rumi: {offset: 0x81BC, specialOffset: null, code: 0x01},
-  rita: {offset: 0x81C0, specialOffset: null, code: 0x02},
-  nieve: {offset: 0x81C4, specialOffset: null, code: 0x03},
-  nixie: {offset: 0x81C8, specialOffset: null, code: 0x04},
-  aruraune: {offset: 0x81CC, specialOffset: null, code: 0x05},
-  pandora: {offset: 0x81D0, specialOffset: null, code: 0x06},
-  irisu: {offset: 0x81D4, specialOffset: null, code: 0x07},
-  saya: {offset: 0x81D8, specialOffset: null, code: 0x08},
-  cicini: {offset: 0x81DC, specialOffset: null, code: 0x09},
-  syaro: {offset: 0x81E0, specialOffset: null, code: 0x0A},
-  cocoa: {offset: 0x81E4, specialOffset: 0x9A58, code: 0x0B},
-  ashuri: {offset: 0x81E8, specialOffset: 0x9A5C, code: 0x0C},
-  lilith: {offset: 0x81EC, specialOffset: null, code: 0x0D},
-  vanilla: {offset: 0x81F0, specialOffset: null, code: 0x0E},
-  chocolate: {offset: 0x81F4, specialOffset: null, code: 0x0F},
-  kotri: {offset: 0x81F8, specialOffset: null, code: 0x10},
-  kekeBunny: {offset: 0x81FC, specialOffset: null, code: 0x11},
-  seana: {offset: 0x8200, specialOffset: null, code: 0x12},
-  miriam: {offset: 0x8204, specialOffset: null, code: 0x13},
-  miru: {offset: 0x8208, specialOffset: null, code: 0x14},
-  noah: {offset: 0x820C, specialOffset: null, code: 0x15},
-  erinoah: {offset: 0x8230, specialOffset: null, code: 0x1E},
-  erina: {offset: null, specialOffset: null, code: 0x1F},
-  ribbon: {offset: null, specialOffset: 0x9A94, code: 0x1A}
+  rumi: {offset: 0x81BC, specialOffset: null, code: 0x01, name: "ルミ"},
+  rita: {offset: 0x81C0, specialOffset: null, code: 0x02, name: "リタ"},
+  nieve: {offset: 0x81C4, specialOffset: null, code: 0x03, name: "ニエベ"},
+  nixie: {offset: 0x81C8, specialOffset: null, code: 0x04, name: "ニクシー"},
+  aruraune: {offset: 0x81CC, specialOffset: null, code: 0x05, name: "アルルーナ"},
+  pandora: {offset: 0x81D0, specialOffset: null, code: 0x06, name: "パンドラ"},
+  irisu: {offset: 0x81D4, specialOffset: null, code: 0x07, name: "イリス"},
+  saya: {offset: 0x81D8, specialOffset: null, code: 0x08, name: "サヤ"},
+  cicini: {offset: 0x81DC, specialOffset: null, code: 0x09, name: "シシニ"},
+  syaro: {offset: 0x81E0, specialOffset: null, code: 0x0A, name: "シャロ"},
+  cocoa: {offset: 0x81E4, specialOffset: 0x9A58, code: 0x0B, name: "ココア"},
+  ashuri: {offset: 0x81E8, specialOffset: 0x9A5C, code: 0x0C, name: "アシュリー"},
+  lilith: {offset: 0x81EC, specialOffset: null, code: 0x0D, name: "リリス"},
+  vanilla: {offset: 0x81F0, specialOffset: null, code: 0x0E, name: "バニラ"},
+  chocolate: {offset: 0x81F4, specialOffset: null, code: 0x0F, name: "チョコレート"},
+  kotri: {offset: 0x81F8, specialOffset: null, code: 0x10, name: "コトリ"},
+  kekeBunny: {offset: 0x81FC, specialOffset: null, code: 0x11, name: "ケケバニー"},
+  seana: {offset: 0x8200, specialOffset: null, code: 0x12, name: "シーナ"},
+  miriam: {offset: 0x8204, specialOffset: null, code: 0x13, name: "ミリアム"},
+  miru: {offset: 0x8208, specialOffset: null, code: 0x14, name: "ミル"},
+  noah: {offset: 0x820C, specialOffset: null, code: 0x15, name: "ノア"},
+  erinoah: {offset: 0x8230, specialOffset: null, code: 0x1E, name: "???"},
+  erina: {offset: null, specialOffset: null, code: 0x1F, name: "エリナ"},
+  ribbon: {offset: null, specialOffset: 0x9A94, code: 0x1A, name: "リボン"}
 } as const;
 export const DATA = {
   itemStatuses: {offset: -1, converter: SaveParser.itemStatuses()},
@@ -331,9 +333,13 @@ export type ItemStatuses = {[K in keyof typeof ITEM_STATUSES_DATA]: {level: OrBe
 export type ConsummableCounts = {[K in keyof typeof CONSUMMABLE_COUNTS_DATA]: number};
 export type BadgeStatuses = {[K in keyof typeof BADGE_STATUSES_DATA]: (typeof BADGE_STATUSES)[number]};
 export type StrengthCounts = {[K in keyof typeof STRENGTH_COUNTS_DATA]: number};
-export type BossStatuses = {[K in keyof typeof BOSS_STATUSES_DATA]: {rank: BossStatusesHelper<K, "offset">, specialRank: BossStatusesHelper<K, "specialOffset">, order: number | null}};
+export type BossStatuses = {[K in keyof typeof BOSS_STATUSES_DATA]: BossRankStatuses<K> & BossSpecialRankStatuses<K> & {order: number | null}};
 
-type BossStatusesHelper<K extends keyof typeof BOSS_STATUSES_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_STATUSES_DATA)[K][L] extends null ? null : (typeof RANKS)[number];
+type BossRankNumber<K extends keyof typeof BOSS_STATUSES_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_STATUSES_DATA)[K][L] extends null ? null : number;
+type BossRankString<K extends keyof typeof BOSS_STATUSES_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_STATUSES_DATA)[K][L] extends null ? null : number;
+type BossRankStatuses<K extends keyof typeof BOSS_STATUSES_DATA> = {rank: BossRankString<K, "offset">, rankNumber: BossRankNumber<K, "offset">};
+type BossSpecialRankStatuses<K extends keyof typeof BOSS_STATUSES_DATA> = {specialRank: BossRankString<K, "specialOffset">, specialRankNumber: BossRankNumber<K, "specialOffset">};
+
 type Converter<T> = (buffer: Buffer, offset: number) => T;
 
 
