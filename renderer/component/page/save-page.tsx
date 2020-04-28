@@ -243,14 +243,14 @@ export class SavePage extends Component<Props, State> {
       let bossNodes = keys.map((key) => {
         let data = BOSS_DATA[key];
         let status = save.bossStatuses[key];
-        let rankRatio = (status.order !== null && status.rank !== null) ? (status.rankNumber + 1) / 9 : 0;
+        let rankRatio = (status.order !== null && status.rank !== null) ? (status.rank.number + 1) / 9 : 0;
         let bossNode = (
           <div className="zp-value-wrapper" key={key}>
             <div className="zp-name">{data.name}</div>
             <div className="zp-value">
               <ProgressBar value={rankRatio} stripes={false}/>
               <div className="zp-rank-wrapper">
-                <div className="zp-rank">{(status.order !== null && status.rank !== null) ? status.rank : "—"}</div>
+                <div className="zp-rank">{(status.order !== null && status.rank !== null) ? status.rank.string : "—"}</div>
                 <div className="zp-order">{(status.order !== null) ? "#" + (status.order + 1) : ""}</div>
               </div>
             </div>

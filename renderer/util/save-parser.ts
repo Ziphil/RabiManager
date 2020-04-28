@@ -4,6 +4,7 @@ import {
   promises as fs
 } from "fs";
 import {
+  Below,
   OrBelow
 } from "./type";
 
@@ -123,12 +124,10 @@ export class SaveParser {
         let bossOffset = spec.offset;
         let bossSpecialOffset = spec.specialOffset;
         let bossCode = spec.code;
-        let rank = (bossOffset !== null) ? SaveParser.of(RANKS)(buffer, bossOffset) : null;
-        let rankNumber = (bossOffset !== null) ? SaveParser.int()(buffer, bossOffset) : null;
-        let specialRank = (bossSpecialOffset !== null) ? SaveParser.of(RANKS)(buffer, bossSpecialOffset) : null;
-        let specialRankNumber = (bossSpecialOffset !== null) ? SaveParser.int()(buffer, bossSpecialOffset) : null;
         let order = (orderCodes.indexOf(bossCode) >= 0) ? orderCodes.indexOf(bossCode) : null;
-        result[key] = {rank, rankNumber, specialRank, specialRankNumber, order};
+        let rank = (bossOffset !== null) ? {string: SaveParser.of(BOSS_RANK_STRINGS)(buffer, bossOffset), number: SaveParser.int()(buffer, bossOffset)} : null;
+        let specialRank = (bossSpecialOffset !== null) ? {string: SaveParser.of(BOSS_RANK_STRINGS)(buffer, bossSpecialOffset), number: SaveParser.int()(buffer, bossSpecialOffset)} : null;
+        result[key] = {order, rank, specialRank};
       }
       return result;
     };
@@ -185,7 +184,7 @@ export const DIFFICULTIES = [
 export const MAP_NAMES = [
   "Southern Woodland", "Weastern Coast", "Island Core", "Northern Tundra", "Eastern Highlands", "Rabi Rabi Town", "Plurkwood", "Subterranean Area", "Warp Destination", "System Interior"
 ] as const;
-export const RANKS = [
+export const BOSS_RANK_STRINGS = [
   "E", "D", "C", "B", "A", "S", "SS", "SSS", "MAX"
 ] as const;
 export const SPEEDRUN_MODES = [
@@ -384,18 +383,24 @@ export const DATA = {
   loopCount: {offset: 0x10E3C, converter: SaveParser.int()}
 } as const;
 
-export type ItemStatuses = {[K in keyof typeof ITEM_DATA]: {level: OrBelow<(typeof ITEM_DATA)[K]["maxLevel"]>, equipped: boolean}};
-export type ConsummableCounts = {[K in keyof typeof CONSUMMABLE_DATA]: number};
-export type StrengthCounts = {[K in keyof typeof STRENGTH_DATA]: number};
-export type BadgeStatuses = {[K in keyof typeof BADGE_DATA]: (typeof BADGE_STATUSES)[number]};
-export type MapCompletionStatuses = {[K in keyof typeof MAP_COMPLETION_DATA]: {percent: number, overallPercent: number}};
-export type ItemCompletionStatuses = {[K in keyof typeof ITEM_COMPLETION_DATA]: {count: number, total: number, percent: number}};
-export type BossStatuses = {[K in keyof typeof BOSS_DATA]: BossRankStatuses<K> & BossSpecialRankStatuses<K> & {order: number | null}};
+export type ItemData = typeof ITEM_DATA;
+export type ConsummableData = typeof CONSUMMABLE_DATA;
+export type StrengthData = typeof STRENGTH_DATA;
+export type BadgeData = typeof BADGE_DATA;
+export type MapCompletionData = typeof MAP_COMPLETION_DATA;
+export type ItemCompletionData = typeof ITEM_COMPLETION_DATA;
+export type BossData = typeof BOSS_DATA;
 
-type BossRankNumber<K extends keyof typeof BOSS_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_DATA)[K][L] extends null ? null : number;
-type BossRankString<K extends keyof typeof BOSS_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_DATA)[K][L] extends null ? null : number;
-type BossRankStatuses<K extends keyof typeof BOSS_DATA> = {rank: BossRankString<K, "offset">, rankNumber: BossRankNumber<K, "offset">};
-type BossSpecialRankStatuses<K extends keyof typeof BOSS_DATA> = {specialRank: BossRankString<K, "specialOffset">, specialRankNumber: BossRankNumber<K, "specialOffset">};
+export type ItemStatuses = {[K in keyof ItemData]: {level: OrBelow<ItemData[K]["maxLevel"]>, equipped: boolean}};
+export type ConsummableCounts = {[K in keyof ConsummableData]: number};
+export type StrengthCounts = {[K in keyof StrengthData]: number};
+export type BadgeStatuses = {[K in keyof BadgeData]: (typeof BADGE_STATUSES)[number]};
+export type MapCompletionStatuses = {[K in keyof MapCompletionData]: {percent: number, overallPercent: number}};
+export type ItemCompletionStatuses = {[K in keyof ItemCompletionData]: {count: number, total: number, percent: number}};
+export type BossStatuses = {[K in keyof BossData]: {order: number | null, rank: BossRank<K>, specialRank: BossSpecialRank<K>}};
+
+type BossRank<K extends keyof BossData> = BossData[K]["offset"] extends null ? null : {string: (typeof BOSS_RANK_STRINGS)[number], number: Below<(typeof BOSS_RANK_STRINGS)["length"]>};
+type BossSpecialRank<K extends keyof BossData> = BossData[K]["specialOffset"] extends null ? null : {string: (typeof BOSS_RANK_STRINGS)[number], number: Below<(typeof BOSS_RANK_STRINGS)["length"]>};
 
 type Converter<T> = (buffer: Buffer, offset: number) => T;
 
