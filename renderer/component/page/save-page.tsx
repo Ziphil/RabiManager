@@ -69,7 +69,7 @@ export class SavePage extends Component<Props, State> {
           </div>
           <div className="zp-horizontal-row">
             <div className="zp-value-wrapper">
-              <div className="zp-name">マップ取得率</div>
+              <div className="zp-name">マップ踏破率</div>
               <div className="zp-value">{save.mapPercent.toFixed(2)}%</div>
             </div>
             <div className="zp-value-wrapper">
