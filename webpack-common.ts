@@ -1,27 +1,15 @@
 //
 
-import * as electronReload from "electron-reload-webpack-plugin";
 import * as HtmlWebpackPlugin from "html-webpack-plugin";
 import * as path from "path";
 
 
-let electronReloadPlugin = electronReload({
-  path: path.join(__dirname, "dist", "index.js"),
-  stopOnClose: true,
-  logLevel: 0
-})();
-
 let main = {
-  mode: "development",
-  target: "electron-main",
+  target: "electron-main" as const,
   entry: ["./main/index.ts"],
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "index.js"
-  },
-  node: {
-    __dirname: false,
-    __filename: false
   },
   module: {
     rules: [
@@ -36,21 +24,16 @@ let main = {
   },
   resolve: {
     extensions: [".ts", ".js"]
-  },
-  plugins: [
-    electronReloadPlugin
-  ]
+  }
 };
 
 let renderer = {
-  mode: "development",
-  target: "electron-renderer",
+  target: "electron-renderer" as const,
   entry: ["./renderer/index.tsx"],
   output: {
     path: path.join(__dirname, "dist"),
     filename: "./script/index.bundle.js"
   },
-  devtool: "source-map",
   module: {
     rules: [
       {
@@ -97,7 +80,7 @@ let renderer = {
       },
       {
         test: /\.js$/,
-        enforce: "pre",
+        enforce: "pre" as const,
         use: {
           loader: "source-map-loader"
         }
@@ -111,10 +94,8 @@ let renderer = {
     new HtmlWebpackPlugin({
       template: "./renderer/public/index.html",
       title: "Rajka"
-    }),
-    electronReloadPlugin
+    })
   ]
 };
-
 
 export default [main, renderer];

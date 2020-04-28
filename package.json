@@ -5,14 +5,15 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "develop": "webpack --watch --mode development --config webpack.ts",
-    "build": "webpack --mode production --config webpack.ts",
+    "develop": "cross-env NODE_ENV=development webpack --watch --mode development --config webpack-develop.ts",
+    "build": "webpack --mode production --config webpack-product.ts",
+    "pack": "electron-builder --win --x64",
     "start": "electron dist/index.js"
   },
   "build": {
     "appId": "com.ziphil.zajka",
     "win": {
-      "target": "portable"
+      "target": "nsis"
     }
   },
   "dependencies": {
@@ -27,7 +28,9 @@
     "@types/copy-webpack-plugin": "^5.0.0",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
+    "@types/webpack-merge": "^4.1.5",
     "babel-loader": "^8.1.0",
+    "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.5.2",
     "electron": "^8.2.3",
@@ -46,6 +49,7 @@
     "tslint": "^6.1.1",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-merge": "^4.2.2"
   }
 }

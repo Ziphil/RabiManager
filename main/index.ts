@@ -97,12 +97,15 @@ class Main {
   }
 
   private connectReloadClient(window: BrowserWindow): void {
-    try {
-      client.create(window);
-      console.log("Reload client connected");
-    } catch (error) {
-      console.error("Reload client not found");
+    if (this.isDevelopment()) {
+      client.create(window, {}, () => {
+        console.log("Reload client connected");
+      });
     }
+  }
+
+  private isDevelopment(): boolean {
+    return process.env["NODE_ENV"] === "development";
   }
 
 }
