@@ -184,7 +184,7 @@ export class DashboardPage extends Component<Props, State> {
       <div>
         <h5 className="bp3-heading zp-heading">セーブグループの詳細</h5>
         <FormGroup className="zp-no-margin" label="セーブデータ情報">
-          <div className="zp-vert-group">
+          <div className="zp-vertical-group">
             {buttonNodes}
           </div>
         </FormGroup>
