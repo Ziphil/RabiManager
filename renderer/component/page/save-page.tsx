@@ -11,21 +11,21 @@ import {
 } from "react";
 import {
   ATTACK_ITEM_KEYS,
-  BADGE_STATUSES_DATA,
-  BOSS_STATUSES_DATA,
+  BADGE_DATA,
+  BOSS_DATA,
   BadgeStatuses,
   BossStatuses,
-  CONSUMMABLE_COUNTS_DATA,
+  CONSUMMABLE_DATA,
   ConsummableCounts,
   ExtendedSave,
-  ITEM_STATUSES_DATA,
+  ITEM_DATA,
   ItemStatuses,
   MAGIC_ITEM_KEYS,
   ORB_ITEM_KEYS,
   OTHER_ITEM_KEYS,
   RIBBON_SKILL_ITEM_KEYS,
   SKILL_ITEM_KEYS,
-  STRENGTH_COUNTS_DATA,
+  STRENGTH_DATA,
   Save,
   SaveExtension,
   StrengthCounts
@@ -106,7 +106,7 @@ export class SavePage extends Component<Props, State> {
     let save = this.state.save;
     let createItemNodes = function (keys: Readonly<Array<keyof ItemStatuses>>): ReactNode {
       let itemNodes = keys.map((key) => {
-        let data = ITEM_STATUSES_DATA[key];
+        let data = ITEM_DATA[key];
         let status = save.itemStatuses[key];
         let nameClassName = (status.level > 0 && !status.equipped) ? "zp-striked" : "";
         let equipNode;
@@ -130,7 +130,7 @@ export class SavePage extends Component<Props, State> {
     };
     let createConsummableNodes = function (keys: Readonly<Array<keyof ConsummableCounts>>): ReactNode {
       let consummableNodes = keys.map((key) => {
-        let data = CONSUMMABLE_COUNTS_DATA[key];
+        let data = CONSUMMABLE_DATA[key];
         let count = save.consummableCounts[key];
         let countNode;
         if (count > 0) {
@@ -148,7 +148,7 @@ export class SavePage extends Component<Props, State> {
     };
     let createStrengthNodes = function (keys: Readonly<Array<keyof StrengthCounts>>): ReactNode {
       let strengthNodes = keys.map((key) => {
-        let data = STRENGTH_COUNTS_DATA[key];
+        let data = STRENGTH_DATA[key];
         let count = save.strengthCounts[key];
         let countNode;
         if (count > 0) {
@@ -186,9 +186,9 @@ export class SavePage extends Component<Props, State> {
           </div>
           <div className="zp-horizontal-row">
             <h5 className="bp3-heading zp-small-heading">消費アイテム</h5>
-            {createConsummableNodes(genericKeys(CONSUMMABLE_COUNTS_DATA))}
+            {createConsummableNodes(genericKeys(CONSUMMABLE_DATA))}
             <h5 className="bp3-heading zp-small-heading">強化アイテム</h5>
-            {createStrengthNodes(genericKeys(STRENGTH_COUNTS_DATA))}
+            {createStrengthNodes(genericKeys(STRENGTH_DATA))}
           </div>
         </div>
       </div>
@@ -200,7 +200,7 @@ export class SavePage extends Component<Props, State> {
     let save = this.state.save;
     let createBadgeNodes = function (keys: Readonly<Array<keyof BadgeStatuses>>): ReactNode {
       let badgeNodes = keys.map((key) => {
-        let data = BADGE_STATUSES_DATA[key];
+        let data = BADGE_DATA[key];
         let status = save.badgeStatuses[key];
         let nameClassName = (status.obtained && !status.equipped) ? "zp-striked" : "";
         let equipNode;
@@ -222,13 +222,13 @@ export class SavePage extends Component<Props, State> {
         <h4 className="bp3-heading">バッジ</h4>
         <div className="zp-horizontal">
           <div className="zp-horizontal-row">
-            {createBadgeNodes(genericKeys(BADGE_STATUSES_DATA).slice(0, 10))}
+            {createBadgeNodes(genericKeys(BADGE_DATA).slice(0, 10))}
           </div>
           <div className="zp-horizontal-row">
-            {createBadgeNodes(genericKeys(BADGE_STATUSES_DATA).slice(10, 21))}
+            {createBadgeNodes(genericKeys(BADGE_DATA).slice(10, 21))}
           </div>
           <div className="zp-horizontal-row">
-            {createBadgeNodes(genericKeys(BADGE_STATUSES_DATA).slice(21, 32))}
+            {createBadgeNodes(genericKeys(BADGE_DATA).slice(21, 32))}
           </div>
         </div>
       </div>
@@ -240,7 +240,7 @@ export class SavePage extends Component<Props, State> {
     let save = this.state.save;
     let createBossNodes = function (keys: Readonly<Array<keyof BossStatuses>>): ReactNode {
       let bossNodes = keys.map((key) => {
-        let data = BOSS_STATUSES_DATA[key];
+        let data = BOSS_DATA[key];
         let status = save.bossStatuses[key];
         let rankRatio = (status.order !== null && status.rank !== null) ? (status.rankNumber + 1) / 9 : 0;
         let bossNode = (
@@ -264,13 +264,13 @@ export class SavePage extends Component<Props, State> {
         <h4 className="bp3-heading">タウンメンバー</h4>
         <div className="zp-horizontal">
           <div className="zp-horizontal-row">
-            {createBossNodes(genericKeys(BOSS_STATUSES_DATA).slice(0, 8))}
+            {createBossNodes(genericKeys(BOSS_DATA).slice(0, 8))}
           </div>
           <div className="zp-horizontal-row">
-            {createBossNodes(genericKeys(BOSS_STATUSES_DATA).slice(8, 16))}
+            {createBossNodes(genericKeys(BOSS_DATA).slice(8, 16))}
           </div>
           <div className="zp-horizontal-row">
-            {createBossNodes(genericKeys(BOSS_STATUSES_DATA).slice(16, 24))}
+            {createBossNodes(genericKeys(BOSS_DATA).slice(16, 24))}
           </div>
         </div>
       </div>

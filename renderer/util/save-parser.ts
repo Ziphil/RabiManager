@@ -30,7 +30,7 @@ export class SaveParser {
   public static itemStatuses(): Converter<ItemStatuses> {
     let converter = function (buffer: Buffer, _: number): ItemStatuses {
       let result = {} as any;
-      for (let [key, spec] of Object.entries(ITEM_STATUSES_DATA)) {
+      for (let [key, spec] of Object.entries(ITEM_DATA)) {
         let offset = spec.offset;
         let maxLevel = spec.maxLevel;
         let rawLevel = SaveParser.int()(buffer, offset);
@@ -49,7 +49,7 @@ export class SaveParser {
   public static consummableCounts(): Converter<ConsummableCounts> {
     let converter = function (buffer: Buffer, _: number): ConsummableCounts {
       let result = {} as any;
-      for (let [key, spec] of Object.entries(CONSUMMABLE_COUNTS_DATA)) {
+      for (let [key, spec] of Object.entries(CONSUMMABLE_DATA)) {
         let offset = spec.offset;
         result[key] = SaveParser.int()(buffer, offset);
       }
@@ -61,7 +61,7 @@ export class SaveParser {
   public static badgeStatuses(): Converter<BadgeStatuses> {
     let converter = function (buffer: Buffer, _: number): BadgeStatuses {
       let result = {} as any;
-      for (let [key, spec] of Object.entries(BADGE_STATUSES_DATA)) {
+      for (let [key, spec] of Object.entries(BADGE_DATA)) {
         let offset = spec.offset;
         result[key] = SaveParser.of(BADGE_STATUSES)(buffer, offset);
       }
@@ -73,7 +73,7 @@ export class SaveParser {
   public static strengthCounts(): Converter<StrengthCounts> {
     let converter = function (buffer: Buffer, _: number): StrengthCounts {
       let result = {} as any;
-      for (let [key, spec] of Object.entries(STRENGTH_COUNTS_DATA)) {
+      for (let [key, spec] of Object.entries(STRENGTH_DATA)) {
         let offset = spec.offset;
         result[key] = SaveParser.count(64)(buffer, offset);
       }
@@ -90,7 +90,7 @@ export class SaveParser {
         let orderCode = SaveParser.int()(buffer, orderOffset + i * 4);
         orderCodes.push(orderCode);
       }
-      for (let [key, spec] of Object.entries(BOSS_STATUSES_DATA)) {
+      for (let [key, spec] of Object.entries(BOSS_DATA)) {
         let bossOffset = spec.offset;
         let bossSpecialOffset = spec.specialOffset;
         let bossCode = spec.code;
@@ -188,7 +188,7 @@ export const RIBBON_SKILL_ITEM_KEYS = [
   "quickBarrette", "maxBracelet", "chargeRing", "plusNecklace", "autoEarrings", "carrotBook", "pHairpin", "cyberFlower"
 ] as const;
 
-export const ITEM_STATUSES_DATA = {
+export const ITEM_DATA = {
   pikoHammer: {offset: 0x7090, maxLevel: 3, name: "ピコハンマー"},
   carrotBomb: {offset: 0x709C, maxLevel: 3, name: "キャロットボム"},
   bunnyAmulet: {offset: 0x7110, maxLevel: 4, name: "バニーのお守り"},
@@ -226,13 +226,13 @@ export const ITEM_STATUSES_DATA = {
   pHairpin: {offset: 0x70E0, maxLevel: 3, name: "Pヘアピン"},
   cyberFlower: {offset: 0x70EC, maxLevel: 1, name: "サイバーフラワー"}
 } as const;
-export const CONSUMMABLE_COUNTS_DATA = {
+export const CONSUMMABLE_DATA = {
   rumiDonut: {offset: 0x7120, name: "ルミのドーナツ"},
   rumiCake: {offset: 0x7124, name: "ルミのケーキ"},
   goldCarrot: {offset: 0x7128, name: "ゴールドキャロット"},
   cocoaBomb: {offset: 0x712C, name: "ココアボム"}
 } as const;
-export const BADGE_STATUSES_DATA = {
+export const BADGE_DATA = {
   healthPlus: {offset: 0x718C, name: "ヘルスプラス"},
   healthSurge: {offset: 0x7190, name: "ヘルスサージ"},
   manaPlus: {offset: 0x7194, name: "マナプラス"},
@@ -266,14 +266,14 @@ export const BADGE_STATUSES_DATA = {
   autoTrigger: {offset: 0x7204, name: "オートボム"},
   lilithGift: {offset: 0x7208, name: "リリスのプレゼント"}
 } as const;
-export const STRENGTH_COUNTS_DATA = {
+export const STRENGTH_DATA = {
   healthUp: {offset: 0x720C, name: "ヘルスアップ"},
   manaUp: {offset: 0x740C, name: "マナアップ"},
   regenUp: {offset: 0x750C, name: "リジェネアップ"},
   attackUp: {offset: 0x730C, name: "アタックアップ"},
   packUp: {offset: 0x760C, name: "バッジアップ"}
 } as const;
-export const BOSS_STATUSES_DATA = {
+export const BOSS_DATA = {
   rumi: {offset: 0x81BC, specialOffset: null, code: 0x01, name: "ルミ"},
   rita: {offset: 0x81C0, specialOffset: null, code: 0x02, name: "リタ"},
   nieve: {offset: 0x81C4, specialOffset: null, code: 0x03, name: "ニエベ"},
@@ -329,16 +329,16 @@ export const DATA = {
   loopCount: {offset: 0x10E3C, converter: SaveParser.int()}
 } as const;
 
-export type ItemStatuses = {[K in keyof typeof ITEM_STATUSES_DATA]: {level: OrBelow<(typeof ITEM_STATUSES_DATA)[K]["maxLevel"]>, equipped: boolean}};
-export type ConsummableCounts = {[K in keyof typeof CONSUMMABLE_COUNTS_DATA]: number};
-export type BadgeStatuses = {[K in keyof typeof BADGE_STATUSES_DATA]: (typeof BADGE_STATUSES)[number]};
-export type StrengthCounts = {[K in keyof typeof STRENGTH_COUNTS_DATA]: number};
-export type BossStatuses = {[K in keyof typeof BOSS_STATUSES_DATA]: BossRankStatuses<K> & BossSpecialRankStatuses<K> & {order: number | null}};
+export type ItemStatuses = {[K in keyof typeof ITEM_DATA]: {level: OrBelow<(typeof ITEM_DATA)[K]["maxLevel"]>, equipped: boolean}};
+export type ConsummableCounts = {[K in keyof typeof CONSUMMABLE_DATA]: number};
+export type BadgeStatuses = {[K in keyof typeof BADGE_DATA]: (typeof BADGE_STATUSES)[number]};
+export type StrengthCounts = {[K in keyof typeof STRENGTH_DATA]: number};
+export type BossStatuses = {[K in keyof typeof BOSS_DATA]: BossRankStatuses<K> & BossSpecialRankStatuses<K> & {order: number | null}};
 
-type BossRankNumber<K extends keyof typeof BOSS_STATUSES_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_STATUSES_DATA)[K][L] extends null ? null : number;
-type BossRankString<K extends keyof typeof BOSS_STATUSES_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_STATUSES_DATA)[K][L] extends null ? null : number;
-type BossRankStatuses<K extends keyof typeof BOSS_STATUSES_DATA> = {rank: BossRankString<K, "offset">, rankNumber: BossRankNumber<K, "offset">};
-type BossSpecialRankStatuses<K extends keyof typeof BOSS_STATUSES_DATA> = {specialRank: BossRankString<K, "specialOffset">, specialRankNumber: BossRankNumber<K, "specialOffset">};
+type BossRankNumber<K extends keyof typeof BOSS_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_DATA)[K][L] extends null ? null : number;
+type BossRankString<K extends keyof typeof BOSS_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_DATA)[K][L] extends null ? null : number;
+type BossRankStatuses<K extends keyof typeof BOSS_DATA> = {rank: BossRankString<K, "offset">, rankNumber: BossRankNumber<K, "offset">};
+type BossSpecialRankStatuses<K extends keyof typeof BOSS_DATA> = {specialRank: BossRankString<K, "specialOffset">, specialRankNumber: BossRankNumber<K, "specialOffset">};
 
 type Converter<T> = (buffer: Buffer, offset: number) => T;
 
