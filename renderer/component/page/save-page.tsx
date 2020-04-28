@@ -44,6 +44,7 @@ export class SavePage extends Component<Props, State> {
     super(props);
     let save = SaveExtension.extend(props.save);
     this.state = {save};
+    console.log(save);
   }
 
   private renderBasicInformation(): ReactNode {
@@ -69,11 +70,11 @@ export class SavePage extends Component<Props, State> {
           <div className="zp-horizontal-row">
             <div className="zp-value-wrapper">
               <div className="zp-name">マップ取得率</div>
-              <div className="zp-value">{save.mapPercent}%</div>
+              <div className="zp-value">{save.mapPercent.toFixed(2)}%</div>
             </div>
             <div className="zp-value-wrapper">
               <div className="zp-name">アイテム取得率</div>
-              <div className="zp-value">{save.itemPercent}%</div>
+              <div className="zp-value">{save.itemPercent.toFixed(2)}%</div>
             </div>
           </div>
           <div className="zp-horizontal-row">

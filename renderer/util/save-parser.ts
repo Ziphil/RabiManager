@@ -82,6 +82,35 @@ export class SaveParser {
     return converter;
   }
 
+  public static mapCompletionStatuses(): Converter<MapCompletionStatuses> {
+    let converter = function (buffer: Buffer, _: number): MapCompletionStatuses {
+      let result = {} as any;
+      for (let [key, spec] of Object.entries(MAP_COMPLETION_DATA)) {
+        let offset = spec.offset;
+        let percent = SaveParser.int()(buffer, offset);
+        let overallPercent = percent * spec.weight;
+        result[key] = {percent, overallPercent};
+      }
+      return result;
+    };
+    return converter;
+  }
+
+  public static itemCompletionStatuses(): Converter<ItemCompletionStatuses> {
+    let converter = function (buffer: Buffer, _: number): ItemCompletionStatuses {
+      let result = {} as any;
+      for (let [key, spec] of Object.entries(ITEM_COMPLETION_DATA)) {
+        let offset = spec.offset;
+        let count = SaveParser.int()(buffer, offset);
+        let total = spec.total;
+        let percent = (total !== 0) ? count / total * 100 : 0;
+        result[key] = {count, total, percent};
+      }
+      return result;
+    };
+    return converter;
+  }
+
   public static bossStatuses(): Converter<BossStatuses> {
     let converter = function (buffer: Buffer, orderOffset: number): BossStatuses {
       let orderCodes = [] as Array<number>;
@@ -232,6 +261,13 @@ export const CONSUMMABLE_DATA = {
   goldCarrot: {offset: 0x7128, name: "ゴールドキャロット"},
   cocoaBomb: {offset: 0x712C, name: "ココアボム"}
 } as const;
+export const STRENGTH_DATA = {
+  healthUp: {offset: 0x720C, name: "ヘルスアップ"},
+  manaUp: {offset: 0x740C, name: "マナアップ"},
+  regenUp: {offset: 0x750C, name: "リジェネアップ"},
+  attackUp: {offset: 0x730C, name: "アタックアップ"},
+  packUp: {offset: 0x760C, name: "バッジアップ"}
+} as const;
 export const BADGE_DATA = {
   healthPlus: {offset: 0x718C, name: "ヘルスプラス"},
   healthSurge: {offset: 0x7190, name: "ヘルスサージ"},
@@ -266,12 +302,29 @@ export const BADGE_DATA = {
   autoTrigger: {offset: 0x7204, name: "オートボム"},
   lilithGift: {offset: 0x7208, name: "リリスのプレゼント"}
 } as const;
-export const STRENGTH_DATA = {
-  healthUp: {offset: 0x720C, name: "ヘルスアップ"},
-  manaUp: {offset: 0x740C, name: "マナアップ"},
-  regenUp: {offset: 0x750C, name: "リジェネアップ"},
-  attackUp: {offset: 0x730C, name: "アタックアップ"},
-  packUp: {offset: 0x760C, name: "バッジアップ"}
+export const MAP_COMPLETION_DATA = {
+  woodland: {offset: 0x80CC, weight: 16 / 130},
+  coast: {offset: 0x80D0, weight: 16 / 130},
+  core: {offset: 0x80D4, weight: 16 / 130},
+  tundra: {offset: 0x80D8, weight: 16 / 130},
+  highlands: {offset: 0x80DC, weight: 16 / 130},
+  town: {offset: 0x80E0, weight: 1 / 130},
+  plurkwood: {offset: 0x80E4, weight: 16 / 130},
+  subterranean: {offset: 0x80E8, weight: 16 / 130},
+  destination: {offset: 0x80EC, weight: 1 / 130},
+  system: {offset: 0x80F0, weight: 16 / 130}
+} as const;
+export const ITEM_COMPLETION_DATA = {
+  woodland: {offset: 0x99BC, total: 30},
+  coast: {offset: 0x99C4, total: 33},
+  core: {offset: 0x99CC, total: 25},
+  tundra: {offset: 0x99D4, total: 26},
+  highlands: {offset: 0x99DC, total: 31},
+  town: {offset: 0x99E4, total: 2},
+  plurkwood: {offset: 0x99EC, total: 0},
+  subterranean: {offset: 0x99F4, total: 5},
+  destination: {offset: 0x99FC, total: 0},
+  system: {offset: 0x9A04, total: 7}
 } as const;
 export const BOSS_DATA = {
   rumi: {offset: 0x81BC, specialOffset: null, code: 0x01, name: "ルミ"},
@@ -302,8 +355,10 @@ export const BOSS_DATA = {
 export const DATA = {
   itemStatuses: {offset: -1, converter: SaveParser.itemStatuses()},
   consummableCounts: {offset: -1, converter: SaveParser.consummableCounts()},
-  badgeStatuses: {offset: -1, converter: SaveParser.badgeStatuses()},
   strengthCounts: {offset: -1, converter: SaveParser.strengthCounts()},
+  badgeStatuses: {offset: -1, converter: SaveParser.badgeStatuses()},
+  mapCompletionStatuses: {offset: -1, converter: SaveParser.mapCompletionStatuses()},
+  itemCompletionStatuses: {offset: -1, converter: SaveParser.itemCompletionStatuses()},
   bossStatuses: {offset: 0x95C4, converter: SaveParser.bossStatuses()},
   x: {offset: 0x7084, converter: SaveParser.int()},
   y: {offset: 0x7088, converter: SaveParser.int()},
@@ -315,8 +370,8 @@ export const DATA = {
   takenSpikeDamage: {offset: 0x9958, converter: SaveParser.int()},
   dealtDamage: {offset: 0x99AC, converter: SaveParser.int()},
   healedHp: {offset: 0x99B0, converter: SaveParser.int()},
-  itemPercent: {offset: 0x9B18, converter: SaveParser.int()},
-  mapPercent: {offset: 0x9B1C, converter: SaveParser.int()},
+  mapPercentRounded: {offset: 0x9B1C, converter: SaveParser.int()},
+  itemPercentRounded: {offset: 0x9B18, converter: SaveParser.int()},
   mapName: {offset: 0x80A4, converter: SaveParser.of(MAP_NAMES)},
   chapter: {offset: 0x99A8, converter: SaveParser.int()},
   playTime: {offset: 0x80B8, converter: SaveParser.int()},
@@ -331,8 +386,10 @@ export const DATA = {
 
 export type ItemStatuses = {[K in keyof typeof ITEM_DATA]: {level: OrBelow<(typeof ITEM_DATA)[K]["maxLevel"]>, equipped: boolean}};
 export type ConsummableCounts = {[K in keyof typeof CONSUMMABLE_DATA]: number};
-export type BadgeStatuses = {[K in keyof typeof BADGE_DATA]: (typeof BADGE_STATUSES)[number]};
 export type StrengthCounts = {[K in keyof typeof STRENGTH_DATA]: number};
+export type BadgeStatuses = {[K in keyof typeof BADGE_DATA]: (typeof BADGE_STATUSES)[number]};
+export type MapCompletionStatuses = {[K in keyof typeof MAP_COMPLETION_DATA]: {percent: number, overallPercent: number}};
+export type ItemCompletionStatuses = {[K in keyof typeof ITEM_COMPLETION_DATA]: {count: number, total: number, percent: number}};
 export type BossStatuses = {[K in keyof typeof BOSS_DATA]: BossRankStatuses<K> & BossSpecialRankStatuses<K> & {order: number | null}};
 
 type BossRankNumber<K extends keyof typeof BOSS_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_DATA)[K][L] extends null ? null : number;
@@ -390,12 +447,31 @@ export class SaveExtension {
   public get townMemberCount(this: ExtendedSave): number {
     let statuses = this.bossStatuses;
     let count = 0;
-    for (let [name, status] of Object.entries(statuses)) {
+    for (let [key, status] of Object.entries(statuses)) {
       if (status.order !== null) {
         count ++;
       }
     }
     return count;
+  }
+
+  public get mapPercent(this: ExtendedSave): number {
+    let percent = 0;
+    for (let [key, status] of Object.entries(MAP_COMPLETION_DATA)) {
+      percent += this.mapCompletionStatuses[key].overallPercent;
+    }
+    return percent;
+  }
+
+  public get itemPercent(this: ExtendedSave): number {
+    let count = 0;
+    let total = 0;
+    for (let [key, status] of Object.entries(ITEM_COMPLETION_DATA)) {
+      count += this.itemCompletionStatuses[key].count;
+      total += this.itemCompletionStatuses[key].total;
+    }
+    let percent = count / total * 100;
+    return percent;
   }
 
 }
