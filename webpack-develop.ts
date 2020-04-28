@@ -10,13 +10,13 @@ let electronReloadPlugin = electronReload({
   path: path.join(__dirname, "dist", "index.js"),
   stopOnClose: true,
   logLevel: 0
-})();
+});
 
 let main = merge(common[0], {
   mode: "development",
   devtool: "source-map",
   plugins: [
-    electronReloadPlugin
+    electronReloadPlugin()
   ]
 });
 
@@ -24,7 +24,7 @@ let renderer = merge(common[1], {
   mode: "development",
   devtool: "source-map",
   plugins: [
-    electronReloadPlugin
+    electronReloadPlugin()
   ]
 });
 
