@@ -313,7 +313,68 @@ export type ConsummableCounts = {[K in keyof typeof CONSUMMABLE_COUNTS_DATA]: nu
 export type BadgeStatuses = {[K in keyof typeof BADGE_STATUSES_DATA]: (typeof BADGE_STATUSES)[number]};
 export type StrengthCounts = {[K in keyof typeof STRENGTH_COUNTS_DATA]: number};
 export type BossStatuses = {[K in keyof typeof BOSS_STATUSES_DATA]: {rank: BossStatusesHelper<K, "offset">, specialRank: BossStatusesHelper<K, "specialOffset">, order: number | null}};
-export type Save = {[K in keyof typeof DATA]: ReturnType<(typeof DATA)[K]["converter"]>};
 
 type BossStatusesHelper<K extends keyof typeof BOSS_STATUSES_DATA, L extends "offset" | "specialOffset"> = (typeof BOSS_STATUSES_DATA)[K][L] extends null ? null : (typeof RANKS)[number];
 type Converter<T> = (buffer: Buffer, offset: number) => T;
+
+
+export class SaveExtension {
+
+  private constructor(save: Save) {
+    Object.assign(this, save);
+  }
+
+  public static extend(save: Save): Save & SaveExtension {
+    let extendedSave = new SaveExtension(save);
+    return extendedSave as any;
+  }
+
+  private createTimeString(time: number): string {
+    let hour = Math.floor(time / 60 / 60 / 60);
+    let minute = Math.floor(time / 60 / 60) % 60;
+    let second = Math.floor(time / 60) % 60;
+    let string = "";
+    if (hour > 0) {
+      string += hour;
+      string += ":";
+    }
+    if (minute > 0) {
+      string += (hour > 0) ? ("0" + minute).slice(-2) : minute;
+      string += ":";
+    }
+    string += (hour > 0 || minute > 0) ? ("0" + second).slice(-2) : second;
+    return string;
+  }
+
+  public get playTimeString(this: ExtendedSave): string {
+    return this.createTimeString(this.playTime);
+  }
+
+  public get runTimeString(this: ExtendedSave): string {
+    return this.createTimeString(this.runTime);
+  }
+
+  public get totalPlayTimeString(this: ExtendedSave): string {
+    return this.createTimeString(this.totalPlayTime);
+  }
+
+  public get totalRunTimeString(this: ExtendedSave): string {
+    return this.createTimeString(this.totalRunTime);
+  }
+
+  public get townMemberCount(this: ExtendedSave): number {
+    let statuses = this.bossStatuses;
+    let count = 0;
+    for (let [name, status] of Object.entries(statuses)) {
+      if (status.order !== null) {
+        count ++;
+      }
+    }
+    return count;
+  }
+
+}
+
+
+export type Save = {[K in keyof typeof DATA]: ReturnType<(typeof DATA)[K]["converter"]>};
+export type ExtendedSave = Save & SaveExtension;

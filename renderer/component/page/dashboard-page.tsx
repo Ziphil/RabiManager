@@ -82,7 +82,7 @@ export class DashboardPage extends Component<Props, State> {
     let save = saveGroup?.saves.get(number);
     if (save !== undefined && save !== true) {
       let props = {save};
-      let options = {width: 300, height: 300, minWidth: 300, maxHeight: 300};
+      let options = {width: 500, height: 500, minWidth: 500, minHeight: 500};
       this.createWindow("save", props, options);
     }
   }
