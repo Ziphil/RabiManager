@@ -20,6 +20,10 @@ const COMMON_WINDOW_OPTIONS = {
   useContentSize: true,
   webPreferences: {nodeIntegration: true}
 };
+const PRODUCTION_WINDOW_OPTIONS = {
+  resizable: false,
+  webPreferences: {nodeIntegration: true, devTools: false}
+};
 
 
 class Main {
@@ -78,9 +82,11 @@ class Main {
   private createWindow(mode: string, parentId: string | null, props: object, options: BrowserWindowConstructorOptions): BrowserWindow {
     let show = false;
     let parent = (parentId !== null) ? this.windows.get(parentId) : undefined;
-    let window = new BrowserWindow({...COMMON_WINDOW_OPTIONS, show, parent, ...options});
+    let additionalOptions = (this.isDevelopment()) ? {} : PRODUCTION_WINDOW_OPTIONS;
+    let window = new BrowserWindow({...COMMON_WINDOW_OPTIONS, ...additionalOptions, show, parent, ...options});
     let id = window.id.toString();
     window.loadFile("./index.html", {query: {id, mode}});
+    window.setMenu(null);
     window.once("closed", () => {
       this.windows.delete(id);
     });
