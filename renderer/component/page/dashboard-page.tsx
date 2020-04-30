@@ -75,7 +75,7 @@ export class DashboardPage extends Component<Props, State> {
     let key = this.state.nextKey;
     let currentKey = this.state.manager.currentKey;
     if (alert) {
-      if (currentKey === null || this.state.manager.saveGroups.get(key) === undefined) {
+      if (currentKey === key || this.state.manager.saveGroups.get(key) === undefined) {
         this.backupKey(false);
       } else {
         this.setState({showBackupAlert: true});
