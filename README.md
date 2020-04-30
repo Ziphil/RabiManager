@@ -23,6 +23,13 @@ npm run build
 ```
 npm start
 ```
+もしくは、以下のコマンドでそれぞれの環境向けの実行ファイルをビルドすることもできます。
+これを実行すると、`product` フォルダ内にインストーラが生成されます。
+```
+npm run pack:windows  # Windows 用
+npm run pack:mac      # Mac OS 用
+npm run pack:linux    # Linux 用
+```
 
 ## 使い方
 画面上部を操作することで、ゲーム本体が参照するセーブグループと管理用に保存されているセーブグループとを切り替えることができます。
