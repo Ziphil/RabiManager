@@ -19,7 +19,7 @@ export class SaveLocation {
     this.steamImageDirectory = steamImageDirectory;
   }
 
-  public get(place: SavePlace, type: SaveType, file?: string): string {
+  public get(place: SavePlace, type: SaveType, file?: string | number): string {
     let directory = "";
     if (place === "backup") {
       directory = (type === "save") ? this.backupSaveDirectory : this.backupImageDirectory;
@@ -28,7 +28,12 @@ export class SaveLocation {
     }
     let paths = [directory];
     if (file !== undefined) {
-      paths.push(file);
+      if (typeof file === "string") {
+        paths.push(file);
+      } else {
+        let nextFile = (type === "save") ? `save${file}.sav` : `save${file}_a.bmp`;
+        paths.push(nextFile);
+      }
     }
     let path = joinPath(...paths);
     return path;
