@@ -11,20 +11,24 @@ import {
 
 export class SaveParser {
 
-  private path: string;
+  private savePath: string;
+  private imagePath: string;
 
-  public constructor(path: string) {
-    this.path = path;
+  public constructor(savePath: string, imagePath: string) {
+    this.savePath = savePath;
+    this.imagePath = imagePath;
   }
 
   public async parse(): Promise<Save> {
-    let buffer = await fs.readFile(this.path);
+    let buffer = await fs.readFile(this.savePath);
     let result = {} as any;
     for (let [key, spec] of Object.entries(DATA)) {
       let offset = spec.offset;
       let converter = spec.converter;
       result[key] = converter(buffer, offset);
     }
+    result.savePath = this.savePath;
+    result.imagePath = this.imagePath;
     return result;
   }
 
@@ -482,5 +486,5 @@ export class SaveExtension {
 }
 
 
-export type Save = {[K in keyof typeof DATA]: ReturnType<(typeof DATA)[K]["converter"]>};
+export type Save = {[K in keyof typeof DATA]: ReturnType<(typeof DATA)[K]["converter"]>} & {savePath: string, imagePath: string};
 export type ExtendedSave = Save & SaveExtension;

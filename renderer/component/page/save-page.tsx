@@ -76,8 +76,6 @@ export class SavePage extends Component<Props, State> {
               <div className="zp-name">アイテム取得率</div>
               <div className="zp-value">{save.itemPercent.toFixed(2)}%</div>
             </div>
-          </div>
-          <div className="zp-horizontal-row">
             <div className="zp-value-wrapper">
               <div className="zp-name">チャプター</div>
               <div className="zp-value">{save.chapter}</div>
@@ -95,6 +93,14 @@ export class SavePage extends Component<Props, State> {
             <div className="zp-value-wrapper">
               <div className="zp-name">プレイ時間</div>
               <div className="zp-value">{save.runTimeString} / {save.totalRunTimeString}</div>
+            </div>
+          </div>
+          <div className="zp-horizontal-row">
+            <div className="zp-value-wrapper">
+              <div className="zp-name">サムネイル</div>
+              <div className="zp-value">
+                <img className="zp-thumbnail" src={save.imagePath}/>
+              </div>
             </div>
           </div>
         </div>

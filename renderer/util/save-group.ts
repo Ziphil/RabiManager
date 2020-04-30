@@ -43,7 +43,7 @@ export class SaveGroup {
   public async loadDetail(number: number): Promise<void> {
     let currentSave = this.saves.get(number);
     if (currentSave === true) {
-      let parser = new SaveParser(this.location.get("backup", "save", `save${number}.sav`));
+      let parser = new SaveParser(this.location.get("backup", "save", `save${number}.sav`), this.location.get("backup", "image", `save${number}_a.bmp`));
       let save = await parser.parse();
       this.saves.set(number, save);
     }
