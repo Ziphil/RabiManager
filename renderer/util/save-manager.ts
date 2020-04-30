@@ -7,6 +7,9 @@ import {
   join as joinPath
 } from "path";
 import {
+  SaveError
+} from "./save-error";
+import {
   SaveGroup
 } from "./save-group";
 import {
@@ -81,6 +84,7 @@ export class SaveManager {
   }
 
   public async backup(key: string): Promise<void> {
+    this.verifyKey(key);
     let saveGroup = this.saveGroups.get(key);
     if (saveGroup === undefined && key.match(/^[\w\d-]+$/)) {
       let location = this.createLocation(key);
@@ -96,6 +100,7 @@ export class SaveManager {
   }
 
   public async use(key: string): Promise<void> {
+    this.verifyKey(key);
     let saveGroup = this.saveGroups.get(key);
     if (saveGroup) {
       this.currentKey = key;
@@ -105,10 +110,17 @@ export class SaveManager {
   }
 
   public async change(key: string): Promise<void> {
+    this.verifyKey(key);
     if (this.currentKey) {
       await this.backup(this.currentKey);
     }
     await this.use(key);
+  }
+
+  private verifyKey(key: string): void {
+    if (!key.match(/^[\w\d_-]+$/)) {
+      throw new SaveError("invalidKey");
+    }
   }
 
   private createLocation(key: string): SaveLocation {

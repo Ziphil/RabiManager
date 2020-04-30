@@ -60,8 +60,14 @@ export class DashboardPage extends Component<Props, State> {
   private async changeKey(): Promise<void> {
     let key = this.state.nextKey;
     if (key !== null) {
-      await this.state.manager.change(key);
-      this.setState({manager: this.state.manager});
+      try {
+        await this.state.manager.change(key);
+        CustomToaster.show({message: "セーブグループを変更しました。", intent: "success", icon: "tick"});
+      } catch (error) {
+        this.catchError(error);
+      } finally {
+        this.setState({manager: this.state.manager});
+      }
     }
   }
 
@@ -75,11 +81,14 @@ export class DashboardPage extends Component<Props, State> {
         this.setState({showBackupAlert: true});
       }
     } else {
-      if (key !== null) {
+      try {
         await this.state.manager.backup(key);
-        this.setState({manager: this.state.manager});
+        CustomToaster.show({message: "セーブグループをコピーしました。", intent: "success", icon: "tick"});
+      } catch (error) {
+        this.catchError(error);
+      } finally {
+        this.setState({manager: this.state.manager, showBackupAlert: false});
       }
-      this.setState({showBackupAlert: false});
     }
   }
 
@@ -88,12 +97,19 @@ export class DashboardPage extends Component<Props, State> {
     if (alert) {
       this.setState({showUseAlert: true});
     } else {
-      if (key !== null) {
+      try {
         await this.state.manager.use(key);
-        this.setState({manager: this.state.manager});
+        CustomToaster.show({message: "セーブグループを反映しました。", intent: "success", icon: "tick"});
+      } catch (error) {
+        this.catchError(error);
+      } finally {
+        this.setState({manager: this.state.manager, showUseAlert: false});
       }
-      this.setState({showUseAlert: false});
     }
+  }
+
+  private async deleteKey(alert: boolean = true): Promise<void> {
+    CustomToaster.show({message: "未実装です。", intent: "warning", icon: "warning-sign"});
   }
 
   private async openSave(saveGroup: SaveGroup | undefined, number: number): Promise<void> {
@@ -103,6 +119,17 @@ export class DashboardPage extends Component<Props, State> {
       let props = {save};
       let options = {width: 700, height: 700, minWidth: 700, minHeight: 700};
       this.createWindow("save", props, options);
+    }
+  }
+
+  private catchError(error: any): void {
+    if (error.name === "SaveError") {
+      let code = error.code;
+      if (code === "invalidKey") {
+        CustomToaster.show({message: "セーブグループ名が不正です。半角英数字とアンダーバーとハイフンのみで構成してください。", intent: "danger", icon: "error"});
+      }
+    } else {
+      CustomToaster.show({message: "予期しないエラーが発生しました。", intent: "danger", icon: "error"});
     }
   }
 
@@ -176,7 +203,7 @@ export class DashboardPage extends Component<Props, State> {
           <Button text="反映" icon="circle-arrow-left" onClick={() => this.useKey()}/>
         </ButtonGroup>
         <ButtonGroup>
-          <Button text="削除" intent="danger" icon="delete"/>
+          <Button text="削除" intent="danger" icon="delete" onClick={() => this.deleteKey()}/>
         </ButtonGroup>
       </div>
     );
@@ -262,4 +289,4 @@ type State = {
 };
 
 let StringSelect = Select.ofType<string>();
-let CustomToaster = Toaster.create({className: "zp-toaster", position: "top", maxToasts: 3});
+let CustomToaster = Toaster.create({className: "zp-toaster", position: "top", maxToasts: 2});
