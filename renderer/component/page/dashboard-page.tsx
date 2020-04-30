@@ -1,6 +1,7 @@
 //
 
 import {
+  Alert,
   Button,
   ButtonGroup,
   ControlGroup,
@@ -24,6 +25,7 @@ import {
 } from "electron";
 import * as react from "react";
 import {
+  Fragment,
   ReactElement,
   ReactNode
 } from "react";
@@ -42,13 +44,15 @@ export class DashboardPage extends Component<Props, State> {
 
   public state: State = {
     manager: new SaveManager(),
-    nextKey: null,
+    nextKey: "",
+    showBackupAlert: false,
+    showUseAlert: false,
     ready: false
   };
 
   public async componentDidMount(): Promise<void> {
     await this.state.manager.load();
-    let currentKey = this.state.manager.currentKey;
+    let currentKey = this.state.manager.currentKey ?? "";
     this.setState({ready: true, nextKey: currentKey});
     this.fitWindow();
   }
@@ -61,19 +65,34 @@ export class DashboardPage extends Component<Props, State> {
     }
   }
 
-  private async backupKey(): Promise<void> {
+  private async backupKey(alert: boolean = true): Promise<void> {
     let key = this.state.nextKey;
-    if (key !== null) {
-      await this.state.manager.backup(key);
-      this.setState({manager: this.state.manager});
+    let currentKey = this.state.manager.currentKey;
+    if (alert) {
+      if (currentKey === null || this.state.manager.saveGroups.get(key) === undefined) {
+        this.backupKey(false);
+      } else {
+        this.setState({showBackupAlert: true});
+      }
+    } else {
+      if (key !== null) {
+        await this.state.manager.backup(key);
+        this.setState({manager: this.state.manager});
+      }
+      this.setState({showBackupAlert: false});
     }
   }
 
-  private async useKey(): Promise<void> {
+  private async useKey(alert: boolean = true): Promise<void> {
     let key = this.state.nextKey;
-    if (key !== null) {
-      await this.state.manager.use(key);
-      this.setState({manager: this.state.manager});
+    if (alert) {
+      this.setState({showUseAlert: true});
+    } else {
+      if (key !== null) {
+        await this.state.manager.use(key);
+        this.setState({manager: this.state.manager});
+      }
+      this.setState({showUseAlert: false});
     }
   }
 
@@ -116,8 +135,8 @@ export class DashboardPage extends Component<Props, State> {
           </NavbarHeading>
         </NavbarGroup>
         <NavbarGroup align="right">
-          <Button text="設定" minimal={true} icon="cog" onClick={this.openSetting.bind(this)}/>
-          <Button text="更新" minimal={true} icon="updated" onClick={this.refreshManager.bind(this)}/>
+          <Button text="設定" minimal={true} icon="cog" onClick={() => this.openSetting()}/>
+          <Button text="更新" minimal={true} icon="updated" onClick={() => this.refreshManager()}/>
           <Popover>
             <Button text="開く" minimal={true} icon="folder-shared-open"/>
             <Menu>
@@ -144,22 +163,43 @@ export class DashboardPage extends Component<Props, State> {
         <FormGroup label="セーブグループ名">
           <StringSelect items={keys} activeItem={this.state.nextKey} itemRenderer={this.renderKeyItem} filterable={false} popoverProps={popoverProps} onItemSelect={(key) => this.setState({nextKey: key})}>
             <ControlGroup fill={true}>
-              <InputGroup value={this.state.nextKey ?? ""} fill={true} onChange={(event) => this.setState({nextKey: event.target.value})}/>
+              <InputGroup value={this.state.nextKey} fill={true} onChange={(event) => this.setState({nextKey: event.target.value})}/>
               <Button icon="double-caret-vertical"/>
             </ControlGroup>
           </StringSelect>
         </FormGroup>
         <ButtonGroup className="zp-right-margin-button">
-          <Button text="変更" intent="primary" icon="refresh" onClick={this.changeKey.bind(this)}/>
+          <Button text="変更" intent="primary" icon="refresh" onClick={() => this.changeKey()}/>
         </ButtonGroup>
         <ButtonGroup className="zp-right-margin-button">
-          <Button text="コピー" icon="circle-arrow-right" onClick={this.backupKey.bind(this)}/>
-          <Button text="反映" icon="circle-arrow-left" onClick={this.useKey.bind(this)}/>
+          <Button text="コピー" icon="circle-arrow-right" onClick={() => this.backupKey()}/>
+          <Button text="反映" icon="circle-arrow-left" onClick={() => this.useKey()}/>
         </ButtonGroup>
         <ButtonGroup>
           <Button text="削除" intent="danger" icon="delete"/>
         </ButtonGroup>
       </div>
+    );
+    return node;
+  }
+
+  private renderAlerts(): ReactNode {
+    let commonProps = {confirmButtonText: "実行", cancelButtonText: "キャンセル", canOutsideClickCancel: true, intent: "danger", icon: "warning-sign"} as const;
+    let node = (
+      <Fragment>
+        <Alert isOpen={this.state.showBackupAlert} onConfirm={() => this.backupKey(false)} onCancel={() => this.setState({showBackupAlert: false})} {...commonProps}>
+          <p className="zp-justify">
+            ゲームが参照しているセーブグループを保存用としてコピーします。
+            これを実行すると、保存用のデータが上書きされ、現在のデータが失われる可能性があります。
+          </p>
+        </Alert>
+        <Alert isOpen={this.state.showUseAlert} onConfirm={() => this.useKey(false)} onCancel={() => this.setState({showUseAlert: false})} {...commonProps}>
+          <p className="zp-justify">
+            保存用のセーブグループをゲームが参照する箇所にコピーします。
+            これを実行すると、ゲームが参照しているデータが上書きされ、現在のデータが失われる可能性があります。
+          </p>
+        </Alert>
+      </Fragment>
     );
     return node;
   }
@@ -202,6 +242,7 @@ export class DashboardPage extends Component<Props, State> {
           <Divider className="zp-divider"/>
           {this.renderViewSaveGroup()}
         </div>
+        {this.renderAlerts()}
       </div>
     );
     return node;
@@ -214,7 +255,9 @@ type Props = {
 };
 type State = {
   manager: SaveManager,
-  nextKey: string | null,
+  nextKey: string,
+  showBackupAlert: boolean,
+  showUseAlert: boolean,
   ready: boolean
 };
 

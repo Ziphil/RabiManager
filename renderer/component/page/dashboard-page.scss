@@ -42,3 +42,7 @@
 .zp-vertical-group >*:not(:first-child) {
   margin-top: -$button-border-width;
 }
+
+.zp-justify {
+  text-align: justify;
+}
