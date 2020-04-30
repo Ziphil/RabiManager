@@ -31,8 +31,7 @@ export class SaveLocation {
       if (typeof file === "string") {
         paths.push(file);
       } else {
-        let nextFile = (type === "save") ? `save${file}.sav` : `save${file}_a.bmp`;
-        paths.push(nextFile);
+        paths.push(SaveLocation.fullFile(type, file));
       }
     }
     let path = joinPath(...paths);
@@ -41,6 +40,14 @@ export class SaveLocation {
 
   public static oppositePlace(place: SavePlace): SavePlace {
     return (place === "backup") ? "steam" : "backup";
+  }
+
+  public static fullFile(type: SaveType, number: number): string {
+    return (type === "save") ? `save${number}.sav` : `save${number}_a.bmp`;
+  }
+
+  public static regexp(type: SaveType): RegExp {
+    return (type === "save") ? /save(\d+)\.sav$/ : /save(\d+)_a\.bmp$/;
   }
 
 }

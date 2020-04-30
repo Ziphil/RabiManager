@@ -33,7 +33,7 @@ export class SaveGroup {
     this.saves = new Map();
     let files = await fs.readdir(this.location.get("backup", "save"), {withFileTypes: true});
     for (let number = 0 ; number <= 30 ; number ++) {
-      let exists = files.find((file) => file.name === `save${number}.sav`) !== undefined;
+      let exists = files.find((file) => file.name === SaveLocation.fullFile("save", number)) !== undefined;
       if (exists) {
         this.saves.set(number, true);
       }
@@ -56,7 +56,7 @@ export class SaveGroup {
 
   private async copy(targetPlace: "backup" | "steam", type: "save" | "image"): Promise<void> {
     let sourcePlace = SaveLocation.oppositePlace(targetPlace);
-    let regexp = (type === "save") ? /save(\d+)\.sav$/ : /save(\d+)_a\.bmp$/;
+    let regexp = SaveLocation.regexp(type);
     let sourceFiles = await fs.readdir(this.location.get(sourcePlace, type));
     let targetFiles = await fs.readdir(this.location.get(targetPlace, type));
     let filteredSourceFiles = sourceFiles.filter((file) => file.match(regexp));
