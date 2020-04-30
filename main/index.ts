@@ -18,7 +18,7 @@ const COMMON_WINDOW_OPTIONS = {
   autoHideMenuBar: true,
   acceptFirstMouse: true,
   useContentSize: true,
-  webPreferences: {nodeIntegration: true}
+  webPreferences: {nodeIntegration: true, devTools: true}
 };
 const PRODUCTION_WINDOW_OPTIONS = {
   resizable: false,
@@ -86,10 +86,12 @@ class Main {
     let window = new BrowserWindow({...COMMON_WINDOW_OPTIONS, ...additionalOptions, show, parent, ...options});
     let id = window.id.toString();
     window.loadFile("./index.html", {query: {id, mode}});
-    window.setMenu(null);
     window.once("closed", () => {
       this.windows.delete(id);
     });
+    if (!this.isDevelopment()) {
+      window.setMenu(null);
+    }
     this.windows.set(id, window);
     this.props.set(id, props);
     return window;
