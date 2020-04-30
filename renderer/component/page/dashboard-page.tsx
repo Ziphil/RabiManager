@@ -30,11 +30,11 @@ import {
   ReactNode
 } from "react";
 import {
-  SaveGroup
-} from "../../util/save-group";
-import {
   SaveManager
 } from "../../util/save-manager";
+import {
+  Save
+} from "../../util/save-parser";
 import {
   Component
 } from "../component";
@@ -112,14 +112,10 @@ export class DashboardPage extends Component<Props, State> {
     CustomToaster.show({message: "未実装です。", intent: "warning", icon: "warning-sign"});
   }
 
-  private async openSave(saveGroup: SaveGroup | undefined, number: number): Promise<void> {
-    await saveGroup?.loadDetail(number);
-    let save = saveGroup?.saves.get(number);
-    if (save !== undefined && save !== true) {
-      let props = {save};
-      let options = {width: 700, height: 700, minWidth: 700, minHeight: 700};
-      this.createWindow("save", props, options);
-    }
+  private openSave(save: Save): void {
+    let props = {save};
+    let options = {width: 700, height: 700, minWidth: 700, minHeight: 700};
+    this.createWindow("save", props, options);
   }
 
   private catchError(error: any): void {
@@ -237,7 +233,7 @@ export class DashboardPage extends Component<Props, State> {
       let rowButtonNodes = Array.from({length: 10}, (_, column) => {
         let number = row * 10 + column + 1;
         let save = saveGroup?.saves.get(number);
-        let rowButtonNode = <Button text={number} key={number} disabled={save === undefined} fill={true} onClick={() => this.openSave(saveGroup, number)}/>;
+        let rowButtonNode = <Button text={number} key={number} disabled={!save} fill={true} onClick={() => this.openSave(save!)}/>;
         return rowButtonNode;
       });
       let buttonNode = (

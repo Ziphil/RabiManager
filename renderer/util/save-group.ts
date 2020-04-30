@@ -20,7 +20,7 @@ export class SaveGroup {
   public key: string;
   public location: SaveLocation;
   private manager: SaveManager;
-  public saves: Map<number, true | Save>;
+  public saves: Map<number, Save>;
 
   public constructor(key: string, location: SaveLocation, manager: SaveManager) {
     this.key = key;
@@ -31,22 +31,20 @@ export class SaveGroup {
 
   public async load(): Promise<void> {
     this.saves = new Map();
-    let files = await fs.readdir(this.location.get("backup", "save"), {withFileTypes: true});
-    for (let number = 0 ; number <= 30 ; number ++) {
-      let exists = files.find((file) => file.name === SaveLocation.fullFile("save", number)) !== undefined;
-      if (exists) {
-        this.saves.set(number, true);
-      }
-    }
-  }
-
-  public async loadDetail(number: number): Promise<void> {
-    let currentSave = this.saves.get(number);
-    if (currentSave === true) {
-      let parser = new SaveParser(this.location.get("backup", "save", number), this.location.get("backup", "image", number));
-      let save = await parser.parse();
-      this.saves.set(number, save);
-    }
+    let promises = Array.from({length: 31}, (_, number) => {
+      let promise = new Promise(async (resolve, reject) => {
+        try {
+          let parser = new SaveParser(this.location.get("backup", "save", number), this.location.get("backup", "image", number));
+          let save = await parser.parse();
+          this.saves.set(number, save);
+        } catch (error) {
+          this.saves.delete(number);
+        }
+        resolve();
+      });
+      return promise;
+    });
+    await Promise.all(promises);
   }
 
   private async ensureBackupDirectories(): Promise<void> {
