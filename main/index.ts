@@ -10,6 +10,9 @@ import {
 import {
   client
 } from "electron-connect";
+import {
+  join as joinPath
+} from "path";
 
 
 const COMMON_WINDOW_OPTIONS = {
@@ -85,7 +88,7 @@ class Main {
     let additionalOptions = (this.isDevelopment()) ? {} : PRODUCTION_WINDOW_OPTIONS;
     let window = new BrowserWindow({...COMMON_WINDOW_OPTIONS, ...additionalOptions, show, parent, ...options});
     let id = window.id.toString();
-    window.loadFile("./index.html", {query: {id, mode}});
+    window.loadFile(joinPath(__dirname, "index.html"), {query: {id, mode}});
     window.once("closed", () => {
       this.windows.delete(id);
     });

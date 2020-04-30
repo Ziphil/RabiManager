@@ -4,16 +4,21 @@
   "author": "Ziphil",
   "description": "",
   "main": "dist/index.js",
+  "homepage": "./",
   "scripts": {
     "develop": "cross-env NODE_ENV=development webpack --watch --mode development --config webpack-develop.ts",
     "build": "webpack --mode production --config webpack-product.ts",
-    "pack": "electron-builder --win --x64",
+    "pack:windows": "electron-builder -w",
+    "pack:mac": "electron-builder -m",
+    "pack:linux": "electron-builder -l",
     "start": "electron dist/index.js"
   },
   "build": {
     "appId": "com.ziphil.zajka",
-    "win": {
-      "target": "nsis"
+    "productName": "Zajka",
+    "files": ["dist/**/*"],
+    "directories": {
+      "output": "product"
     }
   },
   "dependencies": {
