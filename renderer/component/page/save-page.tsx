@@ -202,10 +202,10 @@ export class SavePage extends Component<Props, State> {
 
   private renderItemExpStatuses(): ReactNode {
     let save = this.state.save;
-    let createExpNodes = function (key: Readonly<keyof ItemExpStatuses>): ReactNode {
+    let createItemExpNodes = function (key: Readonly<keyof ItemExpStatuses>): ReactNode {
       let data = ITEM_DATA[key];
       let status = save.itemExpStatuses[key];
-      let itemNode = (
+      let itemExpNode = (
         <div className="zp-value-wrapper" key={key}>
           <div className="zp-name">{data.name}</div>
           <div className="zp-value">
@@ -216,20 +216,20 @@ export class SavePage extends Component<Props, State> {
           </div>
         </div>
       );
-      return itemNode;
+      return itemExpNode;
     };
     let node = (
       <div>
         <h4 className="bp3-heading">アイテム経験値</h4>
         <div className="zp-horizontal">
           <div className="zp-horizontal-row">
-            {createExpNodes("pikoHammer")}
+            {createItemExpNodes("pikoHammer")}
           </div>
           <div className="zp-horizontal-row">
-            {createExpNodes("ribbon")}
+            {createItemExpNodes("ribbon")}
           </div>
           <div className="zp-horizontal-row">
-            {createExpNodes("carrotBomb")}
+            {createItemExpNodes("carrotBomb")}
           </div>
         </div>
       </div>
