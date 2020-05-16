@@ -116,14 +116,12 @@ export class SavePage extends Component<Props, State> {
         let data = ITEM_DATA[key];
         let status = save.itemStatuses[key];
         let nameClassName = (status.level > 0 && !status.equipped) ? "zp-striked" : "";
-        let equipNode;
-        let levelNode;
-        if (status.level > 0 && status.equipped) {
-          equipNode = <Tag className="zp-small-tag zp-left-margin-tag" minimal={true} round={true}>E</Tag>;
-        }
-        if (data.maxLevel > 1 && status.level > 0) {
-          levelNode = <Tag className="zp-small-tag zp-left-margin-tag" round={true}>Lv.{status.level}</Tag>;
-        }
+        let equipNode = (status.level > 0 && status.equipped) && (
+          <Tag className="zp-small-tag zp-left-margin-tag" minimal={true} round={true}>E</Tag>
+        );
+        let levelNode = (data.maxLevel > 1 && status.level > 0) && (
+          <Tag className="zp-small-tag zp-left-margin-tag" round={true}>Lv.{status.level}</Tag>
+        );
         let itemNode = (
           <div className="zp-item" key={key}>
             <span className={nameClassName}>{(status.level > 0) ? data.name : "—"}</span>
@@ -139,10 +137,9 @@ export class SavePage extends Component<Props, State> {
       let consummableNodes = keys.map((key) => {
         let data = CONSUMMABLE_DATA[key];
         let count = save.consummableCounts[key];
-        let countNode;
-        if (count > 0) {
-          countNode = <Tag className="zp-small-tag zp-left-margin-tag" round={true}>×{count}</Tag>;
-        }
+        let countNode = (count > 0) && (
+          <Tag className="zp-small-tag zp-left-margin-tag" round={true}>×{count}</Tag>
+        );
         let consummableNode = (
           <div className="zp-item" key={key}>
             {(count > 0) ? data.name : "—"}
@@ -157,10 +154,9 @@ export class SavePage extends Component<Props, State> {
       let strengthNodes = keys.map((key) => {
         let data = STRENGTH_DATA[key];
         let count = save.strengthCounts[key];
-        let countNode;
-        if (count > 0) {
-          countNode = <Tag className="zp-small-tag zp-left-margin-tag" round={true}>×{count}</Tag>;
-        }
+        let countNode = (count > 0) && (
+          <Tag className="zp-small-tag zp-left-margin-tag" round={true}>×{count}</Tag>
+        );
         let strengthNode = (
           <div className="zp-item" key={key}>
             {(count > 0) ? data.name : "—"}
@@ -210,10 +206,9 @@ export class SavePage extends Component<Props, State> {
         let data = BADGE_DATA[key];
         let status = save.badgeStatuses[key];
         let nameClassName = (status.obtained && !status.equipped) ? "zp-striked" : "";
-        let equipNode;
-        if (status.equipped) {
-          equipNode = <Tag className="zp-small-tag zp-left-margin-tag" minimal={true} round={true}>E</Tag>;
-        }
+        let equipNode = (status.equipped) && (
+          <Tag className="zp-small-tag zp-left-margin-tag" minimal={true} round={true}>E</Tag>
+        );
         let badgeNode = (
           <div className="zp-item" key={key}>
             <span className={nameClassName}>{(status.obtained) ? data.name : "—"}</span>

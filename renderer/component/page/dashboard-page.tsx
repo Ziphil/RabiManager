@@ -139,13 +139,12 @@ export class DashboardPage extends Component<Props, State> {
     CustomToaster.show({message: "セーブグループのデータを更新しました。", intent: "success", icon: "tick"});
   }
 
-  private renderKeyItem(key: string, itemProps: IItemRendererProps): ReactElement {
-    let node;
+  private renderKeyItem(key: string, itemProps: IItemRendererProps): ReactElement | null {
     let modifiers = itemProps.modifiers;
-    if (modifiers.matchesPredicate) {
-      node = <MenuItem text={key} key={key} active={modifiers.active} onClick={itemProps.handleClick}/>;
-    }
-    return node;
+    let node = (modifiers.matchesPredicate) && (
+      <MenuItem text={key} key={key} active={modifiers.active} onClick={itemProps.handleClick}/>
+    );
+    return node || null;
   }
 
   private renderNavbar(): ReactNode {
