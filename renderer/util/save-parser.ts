@@ -51,6 +51,21 @@ export class SaveParser {
     return converter;
   }
 
+  public static itemExpStatuses(): Converter<ItemExpStatuses> {
+    let converter = function (buffer: Buffer, _: number): ItemExpStatuses {
+      let result = {} as any;
+      for (let [key, spec] of Object.entries(ITEM_EXP_DATA)) {
+        let offset = spec.offset;
+        let max = spec.max;
+        let value = SaveParser.int()(buffer, offset);
+        let proportion = value / max;
+        result[key] = {value, proportion};
+      }
+      return result;
+    };
+    return converter;
+  }
+
   public static consummableCounts(): Converter<ConsummableCounts> {
     let converter = function (buffer: Buffer, _: number): ConsummableCounts {
       let result = {} as any;
@@ -258,6 +273,11 @@ export const ITEM_DATA = {
   pHairpin: {offset: 0x70E0, maxLevel: 3, name: "Pヘアピン"},
   cyberFlower: {offset: 0x70EC, maxLevel: 1, name: "サイバーフラワー"}
 } as const;
+export const ITEM_EXP_DATA = {
+  pikoHammer: {offset: 0x9294, max: 7500},
+  ribbon: {offset: 0x9298, max: 7000},
+  carrotBomb: {offset: 0x929C, max: 500}
+};
 export const CONSUMMABLE_DATA = {
   rumiDonut: {offset: 0x7120, name: "ルミのドーナツ"},
   rumiCake: {offset: 0x7124, name: "ルミのケーキ"},
@@ -357,6 +377,7 @@ export const BOSS_DATA = {
 } as const;
 export const DATA = {
   itemStatuses: {offset: -1, converter: SaveParser.itemStatuses()},
+  itemExpStatuses: {offset: -1, converter: SaveParser.itemExpStatuses()},
   consummableCounts: {offset: -1, converter: SaveParser.consummableCounts()},
   strengthCounts: {offset: -1, converter: SaveParser.strengthCounts()},
   badgeStatuses: {offset: -1, converter: SaveParser.badgeStatuses()},
@@ -366,7 +387,7 @@ export const DATA = {
   x: {offset: 0x7084, converter: SaveParser.int()},
   y: {offset: 0x7088, converter: SaveParser.int()},
   hp: {offset: 0x80A0, converter: SaveParser.int()},
-  mp: {offset: 0x80C0, converter: SaveParser.double()},
+  mp: {offset: 0x80C0, converter: SaveParser.int()},
   enAmount: {offset: 0x92AC, converter: SaveParser.int()},
   magicColor: {offset: 0x9948, converter: SaveParser.int()},
   takenDamage: {offset: 0x80C8, converter: SaveParser.int()},
@@ -388,6 +409,7 @@ export const DATA = {
 } as const;
 
 export type ItemData = typeof ITEM_DATA;
+export type ItemExpData = typeof ITEM_EXP_DATA;
 export type ConsummableData = typeof CONSUMMABLE_DATA;
 export type StrengthData = typeof STRENGTH_DATA;
 export type BadgeData = typeof BADGE_DATA;
@@ -396,6 +418,7 @@ export type ItemCompletionData = typeof ITEM_COMPLETION_DATA;
 export type BossData = typeof BOSS_DATA;
 
 export type ItemStatuses = {[K in keyof ItemData]: {level: OrBelow<ItemData[K]["maxLevel"]>, equipped: boolean}};
+export type ItemExpStatuses = {[K in keyof ItemExpData]: {value: number, proportion: number}};
 export type ConsummableCounts = {[K in keyof ConsummableData]: number};
 export type StrengthCounts = {[K in keyof StrengthData]: number};
 export type BadgeStatuses = {[K in keyof BadgeData]: (typeof BADGE_STATUSES)[number]};

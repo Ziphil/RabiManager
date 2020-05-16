@@ -19,6 +19,7 @@ import {
   ConsummableCounts,
   ExtendedSave,
   ITEM_DATA,
+  ItemExpStatuses,
   ItemStatuses,
   MAGIC_ITEM_KEYS,
   ORB_ITEM_KEYS,
@@ -199,6 +200,43 @@ export class SavePage extends Component<Props, State> {
     return node;
   }
 
+  private renderItemExpStatuses(): ReactNode {
+    let save = this.state.save;
+    let createExpNodes = function (key: Readonly<keyof ItemExpStatuses>): ReactNode {
+      let data = ITEM_DATA[key];
+      let status = save.itemExpStatuses[key];
+      let itemNode = (
+        <div className="zp-value-wrapper" key={key}>
+          <div className="zp-name">{data.name}</div>
+          <div className="zp-value">
+            <ProgressBar value={status.proportion} stripes={false}/>
+            <div className="zp-rank-wrapper">
+              <div className="zp-rank">{status.value}</div>
+            </div>
+          </div>
+        </div>
+      );
+      return itemNode;
+    };
+    let node = (
+      <div>
+        <h4 className="bp3-heading">アイテム経験値</h4>
+        <div className="zp-horizontal">
+          <div className="zp-horizontal-row">
+            {createExpNodes("pikoHammer")}
+          </div>
+          <div className="zp-horizontal-row">
+            {createExpNodes("ribbon")}
+          </div>
+          <div className="zp-horizontal-row">
+            {createExpNodes("carrotBomb")}
+          </div>
+        </div>
+      </div>
+    );
+    return node;
+  }
+
   private renderBadgeStatuses(): ReactNode {
     let save = this.state.save;
     let createBadgeNodes = function (keys: Readonly<Array<keyof BadgeStatuses>>): ReactNode {
@@ -286,6 +324,8 @@ export class SavePage extends Component<Props, State> {
         {this.renderBasicInformation()}
         <Divider className="zp-divider"/>
         {this.renderItemStatuses()}
+        <Divider className="zp-divider"/>
+        {this.renderItemExpStatuses()}
         <Divider className="zp-divider"/>
         {this.renderBadgeStatuses()}
         <Divider className="zp-divider"/>
