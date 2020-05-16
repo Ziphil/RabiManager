@@ -227,12 +227,19 @@ export class DashboardPage extends Component<Props, State> {
   }
 
   private renderViewSaveGroup(): ReactNode {
+    let outerThis = this;
     let saveGroup = this.state.manager.saveGroups.get(this.state.nextKey ?? "");
+    let createButtonNode = function (number: number, text?: string, fill?: boolean): ReactNode {
+      let save = saveGroup?.saves.get(number);
+      let actualText = text ?? number.toString();
+      let actualFill = fill ?? true;
+      let buttonNode = <Button text={actualText} key={number} disabled={!save} fill={actualFill} onClick={() => outerThis.openSave(save!)}/>;
+      return buttonNode;
+    };
     let buttonNodes = Array.from({length: 3}, (_, row) => {
       let rowButtonNodes = Array.from({length: 10}, (_, column) => {
         let number = row * 10 + column + 1;
-        let save = saveGroup?.saves.get(number);
-        let rowButtonNode = <Button text={number} key={number} disabled={!save} fill={true} onClick={() => this.openSave(save!)}/>;
+        let rowButtonNode = createButtonNode(number);
         return rowButtonNode;
       });
       let buttonNode = (
@@ -245,10 +252,13 @@ export class DashboardPage extends Component<Props, State> {
     let node = (
       <div>
         <h5 className="bp3-heading zp-heading">セーブグループの詳細</h5>
-        <FormGroup className="zp-no-margin" label="セーブデータ情報">
+        <FormGroup label="セーブデータの情報">
           <div className="zp-vertical-group">
             {buttonNodes}
           </div>
+        </FormGroup>
+        <FormGroup className="zp-no-margin" label="オートセーブデータの情報">
+          {createButtonNode(0, "Auto", false)}
         </FormGroup>
       </div>
     );
