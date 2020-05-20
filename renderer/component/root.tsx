@@ -42,14 +42,16 @@ export class Root extends Component<Props, State> {
   }
 
   public render(): ReactNode {
-    let node = <div/>;
-    if (this.state.props !== null) {
-      if (this.state.mode === "dashboard") {
-        node = <DashboardPage id={this.state.id} {...this.state.props}/>;
-      } else if (this.state.mode === "save") {
-        node = <SavePage id={this.state.id} {...this.state.props}/>;
+    let pageNode = (() => {
+      if (this.state.props !== null) {
+        if (this.state.mode === "dashboard") {
+          return <DashboardPage id={this.state.id} {...this.state.props}/>;
+        } else if (this.state.mode === "save") {
+          return <SavePage id={this.state.id} {...this.state.props}/>;
+        }
       }
-    }
+    })();
+    let node = pageNode ?? <div/>;
     return node;
   }
 
