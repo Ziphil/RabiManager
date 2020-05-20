@@ -6,7 +6,7 @@ import {
 import {
   Below,
   OrBelow
-} from "./type";
+} from "../util/type";
 
 
 export class SaveParser {

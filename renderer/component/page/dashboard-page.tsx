@@ -31,10 +31,10 @@ import {
 } from "react";
 import {
   SaveManager
-} from "../../util/save-manager";
+} from "../../module/save-manager";
 import {
   Save
-} from "../../util/save-parser";
+} from "../../module/save-parser";
 import {
   Component
 } from "../component";

@@ -30,7 +30,7 @@ import {
   Save,
   SaveExtension,
   StrengthCounts
-} from "../../util/save-parser";
+} from "../../module/save-parser";
 import {
   genericKeys
 } from "../../util/type";
