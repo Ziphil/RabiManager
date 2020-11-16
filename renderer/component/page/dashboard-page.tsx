@@ -175,7 +175,12 @@ export class DashboardPage extends Component<Props, State> {
   private renderChangeSaveGroup(): ReactNode {
     let keys = Array.from(this.state.manager.saveGroups.keys());
     let currentKey = this.state.manager.currentKey;
-    let popoverProps = {position: "auto-start", minimal: true} as const;
+    let popoverProps = {
+      position: "bottom-left",
+      hoverOpenDelay: 0,
+      minimal: true,
+      modifiers: {preventOverflow: {enabled: true, boundariesElement: "window"}, flip: {enabled: true, boundariesElement: "window"}}
+    } as const;
     let node = (
       <div>
         <h5 className="bp3-heading zp-heading">セーブグループの変更</h5>
