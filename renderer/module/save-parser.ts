@@ -460,24 +460,29 @@ export class SaveExtension {
     return string;
   }
 
-  public get playTimeString(this: ExtendedSave): string {
-    return this.createTimeString(this.playTime);
+  public get playTimeString(): string {
+    let castThis = this as ExtendedSave;
+    return castThis.createTimeString(castThis.playTime);
   }
 
-  public get runTimeString(this: ExtendedSave): string {
-    return this.createTimeString(this.runTime);
+  public get runTimeString(): string {
+    let castThis = this as ExtendedSave;
+    return castThis.createTimeString(castThis.runTime);
   }
 
-  public get totalPlayTimeString(this: ExtendedSave): string {
-    return this.createTimeString(this.totalPlayTime);
+  public get totalPlayTimeString(): string {
+    let castThis = this as ExtendedSave;
+    return castThis.createTimeString(castThis.totalPlayTime);
   }
 
-  public get totalRunTimeString(this: ExtendedSave): string {
-    return this.createTimeString(this.totalRunTime);
+  public get totalRunTimeString(): string {
+    let castThis = this as ExtendedSave;
+    return castThis.createTimeString(castThis.totalRunTime);
   }
 
-  public get townMemberCount(this: ExtendedSave): number {
-    let statuses = this.bossStatuses;
+  public get townMemberCount(): number {
+    let castThis = this as ExtendedSave;
+    let statuses = castThis.bossStatuses;
     let count = 0;
     for (let [key, status] of Object.entries(statuses)) {
       if (status.order !== null) {
@@ -487,20 +492,22 @@ export class SaveExtension {
     return count;
   }
 
-  public get mapPercent(this: ExtendedSave): number {
+  public get mapPercent(): number {
+    let castThis = this as ExtendedSave;
     let percent = 0;
     for (let [key, status] of Object.entries(MAP_COMPLETION_DATA)) {
-      percent += this.mapCompletionStatuses[key].overallPercent;
+      percent += castThis.mapCompletionStatuses[key].overallPercent;
     }
     return percent;
   }
 
-  public get itemPercent(this: ExtendedSave): number {
+  public get itemPercent(): number {
+    let castThis = this as ExtendedSave;
     let count = 0;
     let total = 0;
     for (let [key, status] of Object.entries(ITEM_COMPLETION_DATA)) {
-      count += this.itemCompletionStatuses[key].count;
-      total += this.itemCompletionStatuses[key].total;
+      count += castThis.itemCompletionStatuses[key].count;
+      total += castThis.itemCompletionStatuses[key].total;
     }
     let percent = count / total * 100;
     return percent;
