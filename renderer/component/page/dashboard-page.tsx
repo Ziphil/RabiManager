@@ -241,8 +241,8 @@ export class DashboardPage extends Component<Props, State> {
       let buttonNode = <Button text={actualText} key={number} disabled={!save} fill={actualFill} onClick={() => outerThis.openSave(save!)}/>;
       return buttonNode;
     };
-    let buttonNodes = Array.from({length: 3}, (_, row) => {
-      let rowButtonNodes = Array.from({length: 10}, (_, column) => {
+    let buttonNodes = Array.from({length: 3}, (value, row) => {
+      let rowButtonNodes = Array.from({length: 10}, (value, column) => {
         let number = row * 10 + column + 1;
         let rowButtonNode = createButtonNode(number);
         return rowButtonNode;

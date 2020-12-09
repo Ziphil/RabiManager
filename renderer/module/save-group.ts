@@ -31,7 +31,7 @@ export class SaveGroup {
 
   public async load(): Promise<void> {
     this.saves = new Map();
-    let promises = Array.from({length: 31}, (_, number) => {
+    let promises = Array.from({length: 31}, (value, number) => {
       let promise = new Promise(async (resolve, reject) => {
         try {
           let parser = new SaveParser(this.location.get("backup", "save", number), this.location.get("backup", "image", number));

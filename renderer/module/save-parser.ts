@@ -33,7 +33,7 @@ export class SaveParser {
   }
 
   public static itemStatuses(): Converter<ItemStatuses> {
-    let converter = function (buffer: Buffer, _: number): ItemStatuses {
+    let converter = function (buffer: Buffer, offset: number): ItemStatuses {
       let result = {} as any;
       for (let [key, spec] of Object.entries(ITEM_DATA)) {
         let offset = spec.offset;
@@ -52,7 +52,7 @@ export class SaveParser {
   }
 
   public static itemExpStatuses(): Converter<ItemExpStatuses> {
-    let converter = function (buffer: Buffer, _: number): ItemExpStatuses {
+    let converter = function (buffer: Buffer, offset: number): ItemExpStatuses {
       let result = {} as any;
       for (let [key, spec] of Object.entries(ITEM_EXP_DATA)) {
         let offset = spec.offset;
@@ -67,7 +67,7 @@ export class SaveParser {
   }
 
   public static consummableCounts(): Converter<ConsummableCounts> {
-    let converter = function (buffer: Buffer, _: number): ConsummableCounts {
+    let converter = function (buffer: Buffer, offset: number): ConsummableCounts {
       let result = {} as any;
       for (let [key, spec] of Object.entries(CONSUMMABLE_DATA)) {
         let offset = spec.offset;
@@ -79,7 +79,7 @@ export class SaveParser {
   }
 
   public static badgeStatuses(): Converter<BadgeStatuses> {
-    let converter = function (buffer: Buffer, _: number): BadgeStatuses {
+    let converter = function (buffer: Buffer, offset: number): BadgeStatuses {
       let result = {} as any;
       for (let [key, spec] of Object.entries(BADGE_DATA)) {
         let offset = spec.offset;
@@ -91,7 +91,7 @@ export class SaveParser {
   }
 
   public static strengthCounts(): Converter<StrengthCounts> {
-    let converter = function (buffer: Buffer, _: number): StrengthCounts {
+    let converter = function (buffer: Buffer, offset: number): StrengthCounts {
       let result = {} as any;
       for (let [key, spec] of Object.entries(STRENGTH_DATA)) {
         let offset = spec.offset;
@@ -103,7 +103,7 @@ export class SaveParser {
   }
 
   public static mapCompletionStatuses(): Converter<MapCompletionStatuses> {
-    let converter = function (buffer: Buffer, _: number): MapCompletionStatuses {
+    let converter = function (buffer: Buffer, offset: number): MapCompletionStatuses {
       let result = {} as any;
       for (let [key, spec] of Object.entries(MAP_COMPLETION_DATA)) {
         let offset = spec.offset;
@@ -117,7 +117,7 @@ export class SaveParser {
   }
 
   public static itemCompletionStatuses(): Converter<ItemCompletionStatuses> {
-    let converter = function (buffer: Buffer, _: number): ItemCompletionStatuses {
+    let converter = function (buffer: Buffer, offset: number): ItemCompletionStatuses {
       let result = {} as any;
       for (let [key, spec] of Object.entries(ITEM_COMPLETION_DATA)) {
         let offset = spec.offset;
