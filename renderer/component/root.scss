@@ -1,10 +1,6 @@
 @charset "utf-8";
 
-
-$pt-font-family: "Yu Gothic UI", "Meiryo UI", sans-serif;
-$pt-font-family-monospace: monospace;
-
-
+@import "./variable.scss";
 @import "~normalize.css";
 @import "~@blueprintjs/core/src/blueprint.scss";
 
