@@ -16,6 +16,7 @@ class Main {
   }
 
   private render(): void {
+    require("./component/root.scss");
     render(<Root/>, document.getElementById("root"));
   }
 

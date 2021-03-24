@@ -15,7 +15,6 @@ import {
 import {
   SavePage
 } from "./page/save-page";
-import "./root.scss";
 
 
 export class Root extends Component<Props, State> {
