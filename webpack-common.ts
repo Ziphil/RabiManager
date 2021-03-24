@@ -97,7 +97,7 @@ let renderer = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./renderer/public/index.html",
-      title: "Rajka"
+      title: "Zajka"
     })
   ]
 };
