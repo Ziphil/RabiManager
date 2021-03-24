@@ -14,7 +14,8 @@
     "start": "electron dist/index.js"
   },
   "eslintConfig": {
-    "extends": "ziphil"
+    "extends": "ziphil",
+    "ignorePatterns": "webpack-*.ts"
   },
   "build": {
     "appId": "com.ziphil.zajka",
