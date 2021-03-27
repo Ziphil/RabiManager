@@ -101,7 +101,7 @@ class Main {
   }
 
   private createMainWindow(): BrowserWindow {
-    let options = {width: 420, height: 544, minWidth: 420, minHeight: 544};
+    let options = {width: 420, height: 535, minWidth: 420, minHeight: 535};
     let window = this.createWindow("dashboard", null, {}, options);
     this.connectReloadClient(window);
     return window;
